@@ -21,8 +21,10 @@ analytics and a curated shop.
   your global directory (`~/.claude/skills/`); update or uninstall; spot skills that are
   installed but never used.
 - **📊 Usage** — skill-cellar reads your local Claude Code transcripts and shows how often
-  each skill actually fires, per project and over time. No new tracking, no telemetry —
-  just analytics over logs you already have.
+  each skill actually fires, per project and over time — analytics over logs you already
+  have. Cross-device sync of your usage metadata is **opt-in and off by default** (via
+  Turso/libSQL); nothing leaves your machine unless you enable it, and transcript content
+  never does.
 - **🔨 Craft** — scaffold a new skill and edit its frontmatter and body with live spec
   validation, so what you write is conformant before you ship it.
 - **✅ Conformance everywhere** — every skill, in the shop or your library, carries a
@@ -68,6 +70,8 @@ the [agentskills.io spec](https://agentskills.io/specification) for the full rul
 - **Rust** backend commands for file I/O, registry/GitHub fetch, transcript parsing, and
   spec validation. (No Python — Tauri's backend is Rust, and v1's backend work is light
   enough that Rust is the cleanest fit.)
+- **Turso (libSQL)** for optional, opt-in cross-device sync of usage metadata — off by
+  default and local-first; transcript content is never synced.
 
 ## Development
 

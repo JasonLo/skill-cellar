@@ -35,11 +35,11 @@ offline), and the **live Turso transport lives in `src-tauri`**.
 ## Step 0 — Governance (do first, no code)
 
 The expanded scope must be reflected in the human-owned specs before coding:
-- **`/ls-intent`** — refine I-4: add a third EARS outcome for the Turso transport
+- **`/spec-intent`** — refine I-4: add a third EARS outcome for the Turso transport
   (e.g. *WHEN sync is enabled and a transport is configured THE SYSTEM SHALL
   upsert the metadata payload to the configured Turso database*) and relax the
   "transport choice is a non-goal" line. Do **not** edit `intent.md` directly.
-- **`/ls-decisions`** — log: chose full Turso now + hashed-per-project IDs with a
+- **`/spec-decisions`** — log: chose full Turso now + hashed-per-project IDs with a
   local-only salt + local-only device id, `[intent: I-4]`.
 
 ---
@@ -164,7 +164,7 @@ Follow the fixture/assertion style of `core/tests/usage.rs`.
    monitor IPC/network and confirm `sync_now` returns `None` and no request leaves;
    enter a real Turso URL + token, enable sync, click "Sync now", confirm
    `usage_metric` rows appear in the Turso DB and contain **no** path strings.
-5. `/ls-check` — derive I-4 status from outcome pass-counts (writes
+5. `/spec-check` — derive I-4 status from outcome pass-counts (writes
    `intent.md` frontmatter); confirm the two (now three) outcomes register.
 
 ---

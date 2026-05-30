@@ -78,6 +78,28 @@ pub fn install_local_skill(
     Ok(core::install(&LocalDir::new(source_dir), &root)?)
 }
 
+/// Read an installed skill's `SKILL.md` so Craft can load it for editing.
+#[tauri::command]
+#[specta::specta]
+pub fn read_skill(state: State<'_, AppState>, target: TargetKind, dir_name: String) -> CmdResult<String> {
+    Ok(core::fs_skills::read_skill_md_at(&skills_root(&state, &target), &dir_name)?)
+}
+
+/// Validate and write a Craft-authored `SKILL.md` into the target. Re-validates
+/// through the same conformance gate as install (P-6); a validation failure
+/// returns `CommandError { kind: "validation_failed", conformance, .. }` and
+/// touches nothing on disk.
+#[tauri::command]
+#[specta::specta]
+pub fn publish_skill(
+    state: State<'_, AppState>,
+    target: TargetKind,
+    name: String,
+    skill_md: String,
+) -> CmdResult<SkillDescriptor> {
+    Ok(core::fs_skills::publish_skill(&skills_root(&state, &target), &name, &skill_md)?)
+}
+
 #[tauri::command]
 #[specta::specta]
 pub fn set_active_target(state: State<'_, AppState>, target: TargetKind) -> CmdResult<()> {

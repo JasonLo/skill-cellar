@@ -4,7 +4,7 @@ const TABS: { id: Tab; label: string; enabled: boolean; note?: string }[] = [
   { id: 'shop', label: 'Shop', enabled: true },
   { id: 'library', label: 'Library', enabled: true },
   { id: 'usage', label: 'Usage', enabled: true },
-  { id: 'craft', label: 'Craft', enabled: false, note: 'Coming in I-3' },
+  { id: 'craft', label: 'Craft', enabled: true },
 ]
 
 export function Tabs() {

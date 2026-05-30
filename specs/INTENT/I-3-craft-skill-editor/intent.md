@@ -2,15 +2,15 @@
 id: I-3
 title: Craft skill editor
 slug: craft-skill-editor
-status: draft
+status: complete
 opened: 2026-05-29
-closed: null
+closed: 2026-05-30
 superseded_by: null
-verdict_outcomes_passed: 0
+verdict_outcomes_passed: 1
 verdict_outcomes_passed_by_agent: 0
-verdict_outcomes_passed_by_test: 0
+verdict_outcomes_passed_by_test: 1
 verdict_outcomes_total: 1
-verdict_checked_at: 2026-05-29T20:25:00Z
+verdict_checked_at: 2026-05-30T04:02:49Z
 ---
 
 # Intent: Craft skill editor

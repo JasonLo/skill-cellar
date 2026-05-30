@@ -6,7 +6,7 @@ import { InstalledRow } from '../components/InstalledRow'
 import { useApp } from '../state/AppContext'
 
 export function LibraryScreen() {
-  const { activeTarget } = useApp()
+  const { activeTarget, setEditing, setTab } = useApp()
   const [skills, setSkills] = useState<SkillDescriptor[] | null>(null)
   const [error, setError] = useState<string | null>(() =>
     inTauri() ? null : 'Run inside the desktop app to list installed skills.',
@@ -96,7 +96,14 @@ export function LibraryScreen() {
       ) : (
         <ul className="rows">
           {skills.map((s) => (
-            <InstalledRow key={s.path} skill={s} />
+            <InstalledRow
+              key={s.path}
+              skill={s}
+              onEdit={() => {
+                setEditing({ target: activeTarget, dirName: s.dir_name })
+                setTab('craft')
+              }}
+            />
           ))}
         </ul>
       )}

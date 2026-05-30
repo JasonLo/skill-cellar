@@ -56,8 +56,19 @@ pub fn run() {
         )
         .expect("failed to export TypeScript bindings");
 
-    tauri::Builder::default()
-        .plugin(tauri_plugin_dialog::init())
+    // `mut` is only needed when the mcp-bridge feature reassigns below.
+    #[cfg_attr(not(feature = "mcp-bridge"), allow(unused_mut))]
+    let mut app_builder = tauri::Builder::default().plugin(tauri_plugin_dialog::init());
+
+    // Dev-only: the MCP bridge plugin (behind the `mcp-bridge` cargo feature)
+    // lets the Tauri MCP server drive the app for manual verification. Never
+    // present in release builds.
+    #[cfg(feature = "mcp-bridge")]
+    {
+        app_builder = app_builder.plugin(tauri_plugin_mcp_bridge::init());
+    }
+
+    app_builder
         .invoke_handler(builder.invoke_handler())
         .setup(move |app| {
             builder.mount_events(app);

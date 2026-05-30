@@ -49,6 +49,31 @@ async installLocalSkill(sourceDir: string, target: TargetKind) : Promise<Result<
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Read an installed skill's `SKILL.md` so Craft can load it for editing.
+ */
+async readSkill(target: TargetKind, dirName: string) : Promise<Result<string, CommandError>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("read_skill", { target, dirName }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Validate and write a Craft-authored `SKILL.md` into the target. Re-validates
+ * through the same conformance gate as install (P-6); a validation failure
+ * returns `CommandError { kind: "validation_failed", conformance, .. }` and
+ * touches nothing on disk.
+ */
+async publishSkill(target: TargetKind, name: string, skillMd: string) : Promise<Result<SkillDescriptor, CommandError>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("publish_skill", { target, name, skillMd }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async setActiveTarget(target: TargetKind) : Promise<Result<null, CommandError>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("set_active_target", { target }) };

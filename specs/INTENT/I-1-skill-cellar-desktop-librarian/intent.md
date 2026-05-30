@@ -2,15 +2,15 @@
 id: I-1
 title: Shop, install & conformance
 slug: skill-cellar-desktop-librarian
-status: draft
+status: complete
 opened: 2026-05-29
-closed: null
+closed: 2026-05-30
 superseded_by: null
-verdict_outcomes_passed: 0
+verdict_outcomes_passed: 3
 verdict_outcomes_passed_by_agent: 0
-verdict_outcomes_passed_by_test: 0
+verdict_outcomes_passed_by_test: 3
 verdict_outcomes_total: 3
-verdict_checked_at: 2026-05-29T20:25:00Z
+verdict_checked_at: 2026-05-30T02:20:28Z
 ---
 
 # Intent: Shop, install & conformance

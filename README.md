@@ -76,7 +76,7 @@ the [agentskills.io spec](https://agentskills.io/specification) for the full rul
 ## Development
 
 > Project scaffolding is not in place yet. Once it is, this section will document the
-> `pnpm`/`cargo` install and `pnpm tauri dev` workflow.
+> `bun`/`cargo` install and `bun run tauri:dev` workflow.
 
 ## Roadmap
 

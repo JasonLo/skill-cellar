@@ -1,7 +1,7 @@
 // Type bindings mirroring the Rust IPC DTOs in `skill-cellar-core`.
 //
 // BOOTSTRAP: this file is hand-written so the frontend type-checks before the
-// Tauri shell can be built. On the first `npm run tauri dev`/`build`,
+// Tauri shell can be built. On the first `bun run tauri dev`/`build`,
 // tauri-specta regenerates it from the actual `#[tauri::command]` signatures
 // (the single source of truth) and overwrites this content. Keep it in sync by
 // regenerating rather than editing by hand once the shell builds.

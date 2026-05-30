@@ -17,13 +17,13 @@ build prerequisites.
   ```
   A visible window under WSL2 additionally needs WSLg (`$DISPLAY` set). If the
   window renders blank, try `WEBKIT_DISABLE_DMABUF_RENDERER=1`.
-- **Icons:** run `npx tauri icon <logo.png>` once (see `icons/README.md`).
+- **Icons:** run `bunx tauri icon <logo.png>` once (see `icons/README.md`).
 
 ## Run
 
 ```bash
-npm install          # from the repo root
-npm run tauri:dev    # launches Vite + compiles Rust + opens the window
+bun install          # from the repo root
+bun run tauri:dev    # launches Vite + compiles Rust + opens the window
 ```
 
 ## Notes

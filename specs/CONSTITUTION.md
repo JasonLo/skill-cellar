@@ -10,6 +10,7 @@ Non-negotiable project principles. Every other `spec-` skill validates its outpu
 - **P-2:** The backend SHALL be written in Rust; the project MUST NOT introduce a Python backend.
 - **P-3:** The frontend SHALL be built with React, TypeScript, and Vite.
 - **P-4:** Optional cross-device sync, when enabled, SHALL use Turso (libSQL); the app SHALL remain fully functional offline with sync disabled (local-first).
+- **P-9:** The JS toolchain (package manager, script runner, and test runner) SHALL be bun; the project MUST NOT use npm/yarn/pnpm for installs or scripts.
 
 ## Architecture
 
@@ -27,3 +28,4 @@ Non-negotiable project principles. Every other `spec-` skill validates its outpu
 ## Amendments
 
 - **2026-05-29** — Initial constitution ratified.
+- **2026-05-29** — Added P-9 (Stack choice): the JS toolchain SHALL be bun; npm/yarn/pnpm forbidden for installs and scripts. Reason: lock in the package/script/test runner at the same tier as P-3 (React/TS/Vite); npm lockfiles/configs become redundant.

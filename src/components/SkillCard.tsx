@@ -23,7 +23,7 @@ export function SkillCard({ entry }: { entry: RegistryEntry }) {
         <button
           className="btn"
           disabled
-          title="Live install (GitHub fetch) lands in the next milestone; the install + conformance engine is already in the core."
+          title="Live install (GitHub fetch) lands in the next milestone. To install now, use “Install from folder…” in the Library — same validate + atomic-copy engine."
         >
           Install
         </button>

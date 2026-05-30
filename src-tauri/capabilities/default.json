@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Default capability for the main window. The app's own commands are exposed via the invoke handler; no extra plugin permissions are needed for I-1.",
+  "description": "Default capability for the main window. The app's own commands are exposed via the invoke handler; the dialog plugin's open permission (scoped to this window per P-10) backs the native folder picker used by 'Install from folder'.",
   "windows": ["main"],
-  "permissions": ["core:default"]
+  "permissions": ["core:default", "dialog:allow-open"]
 }

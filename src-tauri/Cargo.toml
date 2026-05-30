@@ -18,6 +18,10 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
+# Native folder picker for "Install from folder" (the working local-dir install
+# path; the GitHub-fetch shop install is the follow-on). Only a path picker —
+# the privileged FS work stays in the typed `install_local_skill` core command.
+tauri-plugin-dialog = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # Blocking reqwest: the core's RegistryFetcher trait is synchronous; the Tauri

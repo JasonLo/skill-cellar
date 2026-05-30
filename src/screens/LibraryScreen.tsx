@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { open } from '@tauri-apps/plugin-dialog'
 import { api, inTauri } from '../api/client'
 import type { SkillDescriptor } from '../api/bindings'
 import { useApp } from '../state/AppContext'
@@ -10,8 +11,10 @@ export function LibraryScreen() {
   const [error, setError] = useState<string | null>(() =>
     inTauri() ? null : 'Run inside the desktop app to list installed skills.',
   )
+  const [installing, setInstalling] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = useCallback(() => {
     if (!inTauri()) return
     let cancelled = false
     api
@@ -31,14 +34,33 @@ export function LibraryScreen() {
     }
   }, [activeTarget])
 
+  useEffect(() => load(), [load])
+
+  // Pick a local skill directory and install it into the active target. This is
+  // the working install path (validate → atomic copy), exercised end-to-end:
+  // the native folder picker feeds `install_local_skill`, which wraps the tested
+  // core engine. GitHub-fetch shop install is the follow-on.
+  const installFromFolder = useCallback(async () => {
+    if (!inTauri() || installing) return
+    setNotice(null)
+    const picked = await open({ directory: true, multiple: false, title: 'Choose a skill folder' })
+    if (typeof picked !== 'string') return // cancelled
+    setInstalling(true)
+    try {
+      const desc = await api.installLocalSkill(picked, activeTarget)
+      setNotice(`Installed “${desc.name}” (${desc.conformance.verdict}).`)
+      load()
+    } catch (e) {
+      const err = e as { message?: string; conformance?: { findings?: { message: string }[] } }
+      const detail = err?.conformance?.findings?.[0]?.message
+      setNotice(`Install failed: ${detail ?? err?.message ?? String(e)}`)
+    } finally {
+      setInstalling(false)
+    }
+  }, [activeTarget, installing, load])
+
   if (error) return <div className="screen empty">{error}</div>
   if (!skills) return <div className="screen empty">Loading installed skills…</div>
-  if (skills.length === 0)
-    return (
-      <div className="screen empty">
-        No skills installed in this target yet.
-      </div>
-    )
 
   return (
     <div className="screen">
@@ -47,12 +69,22 @@ export function LibraryScreen() {
         <span className="target-label">
           {activeTarget.kind === 'global' ? 'global' : activeTarget.path}
         </span>
+        <button className="btn" onClick={installFromFolder} disabled={installing}>
+          {installing ? 'Installing…' : 'Install from folder…'}
+        </button>
       </h2>
-      <ul className="rows">
-        {skills.map((s) => (
-          <InstalledRow key={s.path} skill={s} />
-        ))}
-      </ul>
+
+      {notice && <div className="banner">{notice}</div>}
+
+      {skills.length === 0 ? (
+        <div className="empty">No skills installed in this target yet.</div>
+      ) : (
+        <ul className="rows">
+          {skills.map((s) => (
+            <InstalledRow key={s.path} skill={s} />
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

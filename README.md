@@ -9,9 +9,13 @@ skill-cellar is the graphical companion to the
 sommelier's *management* capabilities (discover, install, craft) in a UI and adds usage
 analytics and a curated shop.
 
-> **Status:** in design. This README describes the intended v1. See
-> [`docs/superpowers/specs/2026-05-29-skill-cellar-design.md`](docs/superpowers/specs/2026-05-29-skill-cellar-design.md)
-> for the full design spec.
+> **Status:** early development. The Rust core (conformance, atomic install, offline
+> registry, usage analytics) is implemented and tested, and the Tauri shell builds; the
+> React UI is scaffolded. Install from a local folder works today; shop install from
+> GitHub and the Craft editor are not yet wired (see the roadmap). The authoritative spec
+> lives under [`specs/`](specs/): non-negotiable principles in
+> [`CONSTITUTION.md`](specs/CONSTITUTION.md), product scope per intent in
+> [`INTENT/`](specs/INTENT/), and the engineering log in [`DECISIONS.md`](specs/DECISIONS.md).
 
 ## What it does
 

@@ -1,0 +1,39 @@
+[package]
+name = "skill-cellar"
+version = "0.1.0"
+edition = "2021"
+description = "skill-cellar — a desktop librarian for AI-agent skills"
+license = "MIT"
+# Tauri v2 requires a recent Rust; this crate is not buildable on toolchains
+# older than Tauri's MSRV (1.77.2+). The pure-logic `core` crate has no such
+# requirement and is where the I-1 outcomes are tested.
+rust-version = "1.77.2"
+
+[lib]
+name = "skill_cellar_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Blocking reqwest: the core's RegistryFetcher trait is synchronous; the Tauri
+# command layer runs it off the UI thread.
+reqwest = { version = "0.12", default-features = false, features = [
+    "blocking",
+    "json",
+    "rustls-tls",
+    "gzip",
+] }
+skill-cellar-core = { path = "../core", features = ["specta"] }
+
+# Type-safe TS bindings generated from the #[tauri::command] fns.
+# NOTE: these rc versions are pending verification on the first real desktop
+# build (this repo's CI/dev environment cannot link the Tauri webview). Align
+# specta / specta-typescript / tauri-specta to a mutually-compatible set.
+specta = { version = "2.0.0-rc.20", features = ["derive"] }
+specta-typescript = "0.0.7"
+tauri-specta = { version = "2.0.0-rc.21", features = ["derive", "typescript"] }

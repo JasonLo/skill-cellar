@@ -1,0 +1,91 @@
+//! Tauri IPC command surface. Each command is a thin wrapper over the core;
+//! all real logic lives in `skill-cellar-core`. Commands return
+//! `Result<T, CommandError>` — a serializable, specta-typed projection of the
+//! core's `AppError` so the frontend gets a stable, switchable error shape.
+
+use crate::state::AppState;
+use serde::Serialize;
+use skill_cellar_core::{
+    self as core, AppError, Conformance, LocalDir, RegistryResult, SkillDescriptor, TargetKind,
+};
+use std::path::PathBuf;
+use tauri::State;
+
+/// IPC-facing error. Mirrors `AppError` but is `Serialize + specta::Type`.
+#[derive(Debug, Serialize, specta::Type)]
+pub struct CommandError {
+    pub kind: String,
+    pub message: String,
+    /// Present only for validation failures, so the UI can show why a skill
+    /// was rejected.
+    pub conformance: Option<Conformance>,
+}
+
+impl From<AppError> for CommandError {
+    fn from(e: AppError) -> Self {
+        let conformance = match &e {
+            AppError::ValidationFailed(c) => Some(c.clone()),
+            _ => None,
+        };
+        CommandError {
+            kind: e.kind().to_string(),
+            message: e.to_string(),
+            conformance,
+        }
+    }
+}
+
+type CmdResult<T> = Result<T, CommandError>;
+
+/// Resolve the `.claude/skills` root for a target using the app's home dir.
+fn skills_root(state: &AppState, target: &TargetKind) -> PathBuf {
+    target.skills_root(&state.home_dir)
+}
+
+/// Fetch the curated registry, with offline fallback to cache/bundled snapshot.
+#[tauri::command]
+#[specta::specta]
+pub fn get_registry(state: State<'_, AppState>) -> CmdResult<RegistryResult> {
+    Ok(core::get_registry(state.fetcher.as_ref(), &state.app_data_dir)?)
+}
+
+/// List the skills installed under a target, each with its conformance verdict.
+#[tauri::command]
+#[specta::specta]
+pub fn list_skills(state: State<'_, AppState>, target: TargetKind) -> CmdResult<Vec<SkillDescriptor>> {
+    Ok(core::fs_skills::discover(&skills_root(&state, &target))?)
+}
+
+/// Evaluate raw SKILL.md text against the spec (used for previews/Craft).
+#[tauri::command]
+#[specta::specta]
+pub fn check_conformance(skill_md: String, parent_dir_name: String) -> Conformance {
+    core::conformance::evaluate(&skill_md, &parent_dir_name)
+}
+
+/// Install a skill from a local directory into a target. This is the working
+/// install path for I-1 (the `SkillSource` abstraction). A GitHub-fetching
+/// source — installing directly from a registry entry — is the follow-on.
+#[tauri::command]
+#[specta::specta]
+pub fn install_local_skill(
+    state: State<'_, AppState>,
+    source_dir: PathBuf,
+    target: TargetKind,
+) -> CmdResult<SkillDescriptor> {
+    let root = skills_root(&state, &target);
+    Ok(core::install(&LocalDir::new(source_dir), &root)?)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn set_active_target(state: State<'_, AppState>, target: TargetKind) -> CmdResult<()> {
+    *state.active.lock().unwrap() = Some(target);
+    Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub fn get_active_target(state: State<'_, AppState>) -> CmdResult<Option<TargetKind>> {
+    Ok(state.active.lock().unwrap().clone())
+}

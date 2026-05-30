@@ -8,6 +8,7 @@ import type {
   RegistryResult,
   SkillDescriptor,
   TargetKind,
+  UsageView,
 } from './bindings'
 
 export const api = {
@@ -26,6 +27,8 @@ export const api = {
     invoke<void>('set_active_target', { target }),
 
   getActiveTarget: () => invoke<TargetKind | null>('get_active_target'),
+
+  getUsage: () => invoke<UsageView>('get_usage'),
 }
 
 /** True when running inside the Tauri webview (vs a plain browser dev server). */

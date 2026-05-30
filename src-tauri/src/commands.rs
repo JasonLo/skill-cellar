@@ -6,7 +6,8 @@
 use crate::state::AppState;
 use serde::Serialize;
 use skill_cellar_core::{
-    self as core, AppError, Conformance, LocalDir, RegistryResult, SkillDescriptor, TargetKind,
+    self as core, AppError, Conformance, InstalledUsage, LocalDir, ProjectUsage, RegistryResult,
+    SkillDescriptor, TargetKind,
 };
 use std::path::PathBuf;
 use tauri::State;
@@ -88,4 +89,45 @@ pub fn set_active_target(state: State<'_, AppState>, target: TargetKind) -> CmdR
 #[specta::specta]
 pub fn get_active_target(state: State<'_, AppState>) -> CmdResult<Option<TargetKind>> {
     Ok(state.active.lock().unwrap().clone())
+}
+
+/// The Usage screen's view: per-project invocation counts (the I-2 outcome),
+/// plus installed skills annotated with their total invocations so unused ones
+/// (total 0) surface for pruning.
+#[derive(Debug, Serialize, specta::Type)]
+pub struct UsageView {
+    pub projects: Vec<ProjectUsage>,
+    pub installed: Vec<InstalledUsage>,
+}
+
+/// Report skill usage parsed from the local Claude Code transcripts under
+/// `~/.claude/projects/`, grouped by project, and joined against the skills
+/// installed in the global target (plus the active project target, if one is
+/// set) so never-used installed skills are visible. Read-only (I-2 / P-5).
+#[tauri::command]
+#[specta::specta]
+pub fn get_usage(state: State<'_, AppState>) -> CmdResult<UsageView> {
+    let projects_root = state.home_dir.join(".claude").join("projects");
+    let report = core::usage::usage_report(&projects_root)?;
+
+    // Installed skill names: always the global target, plus the active project
+    // target when one is selected. Discovery tolerates a missing root (-> []).
+    let mut targets = vec![TargetKind::Global];
+    if let Some(active @ TargetKind::Project(_)) = state.active.lock().unwrap().clone() {
+        targets.push(active);
+    }
+    let mut names: Vec<String> = Vec::new();
+    for target in &targets {
+        for desc in core::fs_skills::discover(&skills_root(&state, target))? {
+            names.push(desc.name);
+        }
+    }
+    names.sort();
+    names.dedup();
+
+    let installed = core::usage::join_installed(&report, &names);
+    Ok(UsageView {
+        projects: report.projects,
+        installed,
+    })
 }

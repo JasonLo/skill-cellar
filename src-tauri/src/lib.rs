@@ -29,6 +29,7 @@ pub fn run() {
         commands::install_local_skill,
         commands::set_active_target,
         commands::get_active_target,
+        commands::get_usage,
     ]);
 
     // Regenerate the frontend bindings on every debug build so TS can never

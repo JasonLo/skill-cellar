@@ -61,3 +61,32 @@ export interface CommandError {
   message: string
   conformance: Conformance | null
 }
+
+// --- Usage analytics (I-2) ---
+
+export interface SkillCount {
+  skill: string
+  count: number
+}
+
+export interface ProjectUsage {
+  project: string
+  total: number
+  skills: SkillCount[]
+}
+
+export interface ProjectUsageReport {
+  projects: ProjectUsage[]
+}
+
+// An installed skill alongside its total invocations; `total === 0` means
+// installed but never used.
+export interface InstalledUsage {
+  skill: string
+  total: number
+}
+
+export interface UsageView {
+  projects: ProjectUsage[]
+  installed: InstalledUsage[]
+}

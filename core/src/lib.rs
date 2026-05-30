@@ -7,6 +7,7 @@
 //! - [`fs_skills`] — discover installed skills and install new ones atomically.
 //! - [`registry`] — fetch the curated registry with an offline fallback chain.
 //! - [`projects`] — resolve the active install target.
+//! - [`usage`] — count skill invocations from local transcripts, by project (I-2).
 //!
 //! This crate has **no Tauri and no network dependency** on purpose: the rules
 //! and file operations that the EARS outcomes pin down must build and test in
@@ -18,6 +19,7 @@ pub mod error;
 pub mod fs_skills;
 pub mod projects;
 pub mod registry;
+pub mod usage;
 
 pub use conformance::{Conformance, Finding, Severity, Verdict};
 pub use error::{AppError, AppResult};
@@ -26,3 +28,4 @@ pub use projects::TargetKind;
 pub use registry::{
     get_registry, RegistryEntry, RegistryFetcher, RegistryManifest, RegistryResult, RegistrySource,
 };
+pub use usage::{usage_report, InstalledUsage, ProjectUsage, SkillCount, UsageReport};

@@ -12,8 +12,8 @@ build prerequisites.
 - **Rust ≥ 1.77.2** (Tauri v2 MSRV). Install/upgrade with `rustup`.
 - **Linux/WSL2 system libraries:**
   ```bash
-  sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file \
-    libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+  sudo apt install libwebkit2gtk-4.1-dev libdbus-1-dev build-essential curl \
+    wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
   ```
   A visible window under WSL2 additionally needs WSLg (`$DISPLAY` set). If the
   window renders blank, try `WEBKIT_DISABLE_DMABUF_RENDERER=1`.

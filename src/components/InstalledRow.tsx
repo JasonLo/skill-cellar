@@ -11,7 +11,9 @@ export function InstalledRow({ skill }: { skill: SkillDescriptor }) {
             /{skill.dir_name}
           </span>
         )}
-        {skill.description && <span className="row-desc">{skill.description}</span>}
+        {skill.description && (
+          <span className="row-desc">{skill.description}</span>
+        )}
       </div>
       <ConformanceBadge conformance={skill.conformance} />
     </li>

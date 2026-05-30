@@ -21,6 +21,7 @@ export function SkillCard({ entry }: { entry: RegistryEntry }) {
           {entry.subdir ? `/${entry.subdir}` : ''}
         </span>
         <button
+          type="button"
           className="btn"
           disabled
           title="Live install (GitHub fetch) lands in the next milestone. To install now, use “Install from folder…” in the Library — same validate + atomic-copy engine."

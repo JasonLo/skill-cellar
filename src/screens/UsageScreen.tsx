@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { api, inTauri } from '../api/client'
 import type { UsageView } from '../api/bindings'
+import { api, inTauri } from '../api/client'
 
 export function UsageScreen() {
   const [usage, setUsage] = useState<UsageView | null>(null)
@@ -21,7 +21,9 @@ export function UsageScreen() {
       .catch(
         (e) =>
           !cancelled &&
-          setError(typeof e === 'string' ? e : (e?.message ?? 'Failed to load usage')),
+          setError(
+            typeof e === 'string' ? e : (e?.message ?? 'Failed to load usage'),
+          ),
       )
     return () => {
       cancelled = true
@@ -56,10 +58,14 @@ export function UsageScreen() {
                 <div className="row-main">
                   <span className="row-name">{s.skill}</span>
                   {s.total === 0 && (
-                    <span className="row-desc">never invoked — candidate for pruning</span>
+                    <span className="row-desc">
+                      never invoked — candidate for pruning
+                    </span>
                   )}
                 </div>
-                <span className={`badge ${s.total === 0 ? 'badge-warnings' : 'badge-valid'}`}>
+                <span
+                  className={`badge ${s.total === 0 ? 'badge-warnings' : 'badge-valid'}`}
+                >
                   {s.total}
                 </span>
               </li>

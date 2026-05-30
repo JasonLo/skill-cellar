@@ -1,4 +1,4 @@
-import { useApp, type Tab } from '../state/AppContext'
+import { type Tab, useApp } from '../state/AppContext'
 
 const TABS: { id: Tab; label: string; enabled: boolean; note?: string }[] = [
   { id: 'shop', label: 'Shop', enabled: true },
@@ -10,10 +10,11 @@ const TABS: { id: Tab; label: string; enabled: boolean; note?: string }[] = [
 export function Tabs() {
   const { tab, setTab } = useApp()
   return (
-    <nav className="tabs" role="tablist">
+    <div className="tabs" role="tablist">
       {TABS.map((t) => (
         <button
           key={t.id}
+          type="button"
           role="tab"
           aria-selected={tab === t.id}
           className={`tab ${tab === t.id ? 'tab-active' : ''}`}
@@ -25,6 +26,6 @@ export function Tabs() {
           {!t.enabled && <span className="tab-soon">soon</span>}
         </button>
       ))}
-    </nav>
+    </div>
   )
 }

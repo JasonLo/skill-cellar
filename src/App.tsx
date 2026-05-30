@@ -1,9 +1,9 @@
-import { AppProvider, useApp } from './state/AppContext'
-import { TitleBar } from './components/TitleBar'
 import { Tabs } from './components/Tabs'
-import { ShopScreen } from './screens/ShopScreen'
+import { TitleBar } from './components/TitleBar'
 import { LibraryScreen } from './screens/LibraryScreen'
+import { ShopScreen } from './screens/ShopScreen'
 import { UsageScreen } from './screens/UsageScreen'
+import { AppProvider, useApp } from './state/AppContext'
 
 function ActiveScreen() {
   const { tab } = useApp()
@@ -15,7 +15,11 @@ function ActiveScreen() {
     case 'usage':
       return <UsageScreen />
     default:
-      return <div className="screen empty">This area is part of a later milestone.</div>
+      return (
+        <div className="screen empty">
+          This area is part of a later milestone.
+        </div>
+      )
   }
 }
 

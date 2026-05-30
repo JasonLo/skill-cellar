@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { api, inTauri } from '../api/client'
 import type { RegistryResult } from '../api/bindings'
+import { api, inTauri } from '../api/client'
 import { SkillCard } from '../components/SkillCard'
 
 const SOURCE_NOTE: Record<RegistryResult['source'], string | null> = {
@@ -24,7 +24,11 @@ export function ShopScreen() {
       .catch(
         (e) =>
           !cancelled &&
-          setError(typeof e === 'string' ? e : (e?.message ?? 'Failed to load registry')),
+          setError(
+            typeof e === 'string'
+              ? e
+              : (e?.message ?? 'Failed to load registry'),
+          ),
       )
     return () => {
       cancelled = true

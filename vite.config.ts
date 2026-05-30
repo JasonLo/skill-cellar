@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
 // Tauri-tuned Vite config. See https://v2.tauri.app/start/frontend/vite/
 const host = process.env.TAURI_DEV_HOST
@@ -13,9 +13,7 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     host: host || false,
-    hmr: host
-      ? { protocol: 'ws', host, port: 1421 }
-      : undefined,
+    hmr: host ? { protocol: 'ws', host, port: 1421 } : undefined,
     watch: {
       // Don't watch the Rust side from Vite.
       ignored: ['**/src-tauri/**', '**/core/**'],
@@ -27,7 +25,8 @@ export default defineConfig({
     // Tauri ships modern webviews (webkit2gtk on Linux, WebView2 on Windows,
     // recent WKWebView on macOS), so a modern target is safe — and esbuild
     // cannot downlevel destructuring to the very old `safari13` default.
-    target: process.env.TAURI_ENV_PLATFORM === 'windows' ? 'chrome105' : 'es2022',
+    target:
+      process.env.TAURI_ENV_PLATFORM === 'windows' ? 'chrome105' : 'es2022',
     minify: process.env.TAURI_ENV_DEBUG ? false : 'esbuild',
     sourcemap: !!process.env.TAURI_ENV_DEBUG,
   },

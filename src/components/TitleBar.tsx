@@ -18,8 +18,10 @@ export function TitleBar() {
         <span className="titlebar-title">Skill Cellar</span>
       </div>
 
+      {/* biome-ignore lint/a11y/useSemanticElements: a labelled role="group" of aria-pressed toggle buttons is a valid ARIA pattern; <fieldset> would impose unwanted form layout. */}
       <div className="target-picker" role="group" aria-label="Install target">
         <button
+          type="button"
           className={`target-option ${isGlobal ? 'target-active' : ''}`}
           aria-pressed={isGlobal}
           onClick={() => setActiveTarget({ kind: 'global' })}
@@ -27,10 +29,14 @@ export function TitleBar() {
           Global
         </button>
         <button
+          type="button"
           className={`target-option ${!isGlobal ? 'target-active' : ''}`}
           aria-pressed={!isGlobal}
           onClick={() =>
-            setActiveTarget({ kind: 'project', path: activeTarget.kind === 'project' ? activeTarget.path : '.' })
+            setActiveTarget({
+              kind: 'project',
+              path: activeTarget.kind === 'project' ? activeTarget.path : '.',
+            })
           }
         >
           Project

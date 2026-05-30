@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
 import { open } from '@tauri-apps/plugin-dialog'
-import { api, inTauri } from '../api/client'
+import { useCallback, useEffect, useState } from 'react'
 import type { SkillDescriptor } from '../api/bindings'
-import { useApp } from '../state/AppContext'
+import { api, inTauri } from '../api/client'
 import { InstalledRow } from '../components/InstalledRow'
+import { useApp } from '../state/AppContext'
 
 export function LibraryScreen() {
   const { activeTarget } = useApp()
@@ -27,7 +27,9 @@ export function LibraryScreen() {
       .catch(
         (e) =>
           !cancelled &&
-          setError(typeof e === 'string' ? e : (e?.message ?? 'Failed to list skills')),
+          setError(
+            typeof e === 'string' ? e : (e?.message ?? 'Failed to list skills'),
+          ),
       )
     return () => {
       cancelled = true
@@ -43,7 +45,11 @@ export function LibraryScreen() {
   const installFromFolder = useCallback(async () => {
     if (!inTauri() || installing) return
     setNotice(null)
-    const picked = await open({ directory: true, multiple: false, title: 'Choose a skill folder' })
+    const picked = await open({
+      directory: true,
+      multiple: false,
+      title: 'Choose a skill folder',
+    })
     if (typeof picked !== 'string') return // cancelled
     setInstalling(true)
     try {
@@ -51,7 +57,10 @@ export function LibraryScreen() {
       setNotice(`Installed “${desc.name}” (${desc.conformance.verdict}).`)
       load()
     } catch (e) {
-      const err = e as { message?: string; conformance?: { findings?: { message: string }[] } }
+      const err = e as {
+        message?: string
+        conformance?: { findings?: { message: string }[] }
+      }
       const detail = err?.conformance?.findings?.[0]?.message
       setNotice(`Install failed: ${detail ?? err?.message ?? String(e)}`)
     } finally {
@@ -60,7 +69,8 @@ export function LibraryScreen() {
   }, [activeTarget, installing, load])
 
   if (error) return <div className="screen empty">{error}</div>
-  if (!skills) return <div className="screen empty">Loading installed skills…</div>
+  if (!skills)
+    return <div className="screen empty">Loading installed skills…</div>
 
   return (
     <div className="screen">
@@ -69,7 +79,12 @@ export function LibraryScreen() {
         <span className="target-label">
           {activeTarget.kind === 'global' ? 'global' : activeTarget.path}
         </span>
-        <button className="btn" onClick={installFromFolder} disabled={installing}>
+        <button
+          type="button"
+          className="btn"
+          onClick={installFromFolder}
+          disabled={installing}
+        >
           {installing ? 'Installing…' : 'Install from folder…'}
         </button>
       </h2>

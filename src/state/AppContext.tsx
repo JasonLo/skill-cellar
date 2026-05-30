@@ -1,13 +1,13 @@
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useMemo,
   useState,
-  type ReactNode,
 } from 'react'
-import { api, inTauri } from '../api/client'
 import type { TargetKind } from '../api/bindings'
+import { api, inTauri } from '../api/client'
 
 export type Tab = 'shop' | 'library' | 'usage' | 'craft'
 
@@ -22,7 +22,9 @@ const AppContext = createContext<AppContextValue | null>(null)
 
 export function AppProvider({ children }: { children: ReactNode }) {
   // Default to the user's global skills directory.
-  const [activeTarget, setActiveTargetState] = useState<TargetKind>({ kind: 'global' })
+  const [activeTarget, setActiveTargetState] = useState<TargetKind>({
+    kind: 'global',
+  })
   const [tab, setTab] = useState<Tab>('shop')
 
   const setActiveTarget = useCallback((t: TargetKind) => {
@@ -39,7 +41,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useApp(): AppContextValue {
   const ctx = useContext(AppContext)
   if (!ctx) throw new Error('useApp must be used within an AppProvider')

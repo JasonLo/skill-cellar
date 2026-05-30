@@ -4,9 +4,11 @@
 
 mod commands;
 mod http_fetcher;
+mod http_skill_fetcher;
 mod state;
 
 use http_fetcher::HttpFetcher;
+use http_skill_fetcher::HttpSkillFetcher;
 use state::AppState;
 use tauri::Manager;
 
@@ -19,6 +21,10 @@ use tauri::Manager;
 const REGISTRY_URL: &str =
     "https://raw.githubusercontent.com/agentskills/registry/main/registry.json";
 
+/// GitHub Contents API base, used by the shop's GitHub-fetch install to pull a
+/// registry entry's skill files. Unauthenticated + read-only (no secrets).
+const GITHUB_API_BASE: &str = "https://api.github.com";
+
 pub fn run() {
     // tauri-specta builder: single source of truth for the command set and the
     // generated TS bindings.
@@ -27,6 +33,7 @@ pub fn run() {
         commands::list_skills,
         commands::check_conformance,
         commands::install_local_skill,
+        commands::install_registry_skill,
         commands::read_skill,
         commands::publish_skill,
         commands::set_active_target,
@@ -78,7 +85,13 @@ pub fn run() {
             let home_dir = app.path().home_dir()?;
 
             let fetcher = Box::new(HttpFetcher::new(REGISTRY_URL));
-            app.manage(AppState::new(fetcher, app_data_dir, home_dir));
+            let skill_fetcher = Box::new(HttpSkillFetcher::new(GITHUB_API_BASE));
+            app.manage(AppState::new(
+                fetcher,
+                skill_fetcher,
+                app_data_dir,
+                home_dir,
+            ));
             Ok(())
         })
         .run(tauri::generate_context!())

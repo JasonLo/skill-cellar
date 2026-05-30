@@ -41,7 +41,8 @@ export function LibraryScreen() {
   // Pick a local skill directory and install it into the active target. This is
   // the working install path (validate → atomic copy), exercised end-to-end:
   // the native folder picker feeds `install_local_skill`, which wraps the tested
-  // core engine. GitHub-fetch shop install is the follow-on.
+  // core engine. The Shop's Install button uses the same engine via
+  // `install_registry_skill` (GitHub fetch → validate → atomic copy).
   const installFromFolder = useCallback(async () => {
     if (!inTauri() || installing) return
     setNotice(null)

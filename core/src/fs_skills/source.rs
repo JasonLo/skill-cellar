@@ -4,10 +4,12 @@
 //! files plus the *intended* install name (the name the skill should occupy
 //! under `.claude/skills/`). For I-1 the only implementation is [`LocalDir`]
 //! (a skill already on disk — a fixture, a Craft draft, or a path the user
-//! points at). A GitHub-fetching source is a thin follow-on implementation
-//! that downloads into a temp dir and returns its path.
+//! points at) and [`RemoteSkill`], which fetches a registry entry's files
+//! through an injected [`SkillFetcher`] (the live GitHub download lives in the
+//! Tauri shell) into a temp dir and installs them through the same engine.
 
 use crate::error::AppResult;
+use crate::registry::RegistryEntry;
 use std::path::{Path, PathBuf};
 
 /// A materialized skill: a readable directory and the name it intends to occupy.
@@ -59,6 +61,41 @@ impl SkillSource for LocalDir {
             intended_name: self.intended_name.clone(),
             _guard: None,
         })
+    }
+}
+
+/// Fetches a registry entry's skill files for install. This is the network seam
+/// for the shop's GitHub-fetch install: like [`crate::RegistryFetcher`], the core
+/// defines only the trait and the live HTTP/GitHub implementation lives in the
+/// Tauri shell (`src-tauri`), keeping this crate network-free and hermetically
+/// testable (D-3). An implementation downloads the entry's files into a temp dir
+/// and returns it as a [`Materialized`] whose `_guard` keeps the temp dir alive
+/// until install commits.
+pub trait SkillFetcher: Send + Sync {
+    /// Materialize the skill advertised by `entry` into a local directory. The
+    /// returned [`Materialized::intended_name`] is the entry's `name`, so the
+    /// `name == parent_dir` conformance rule is checked against the directory
+    /// install will actually create.
+    fn fetch_skill(&self, entry: &RegistryEntry) -> AppResult<Materialized>;
+}
+
+/// A skill sourced from a registry entry, materialized by delegating to an
+/// injected [`SkillFetcher`]. Installing it runs the exact same
+/// validate-then-atomic-copy engine as a local folder ([`super::install`]).
+pub struct RemoteSkill<'a> {
+    fetcher: &'a dyn SkillFetcher,
+    entry: RegistryEntry,
+}
+
+impl<'a> RemoteSkill<'a> {
+    pub fn new(fetcher: &'a dyn SkillFetcher, entry: RegistryEntry) -> Self {
+        RemoteSkill { fetcher, entry }
+    }
+}
+
+impl SkillSource for RemoteSkill<'_> {
+    fn materialize(&self) -> AppResult<Materialized> {
+        self.fetcher.fetch_skill(&self.entry)
     }
 }
 

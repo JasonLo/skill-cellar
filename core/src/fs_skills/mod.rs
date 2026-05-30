@@ -6,10 +6,11 @@ mod atomic;
 mod source;
 
 pub use atomic::{atomic_install_dir, atomic_write_file};
-pub use source::{read_skill_md, LocalDir, Materialized, SkillSource};
+pub use source::{read_skill_md, LocalDir, Materialized, RemoteSkill, SkillFetcher, SkillSource};
 
 use crate::conformance::{self, Conformance};
 use crate::error::{AppError, AppResult};
+use crate::registry::RegistryEntry;
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
@@ -101,6 +102,20 @@ pub fn install(source: &dyn SkillSource, target_skills_root: &Path) -> AppResult
     atomic_install_dir(&materialized.dir, &final_dir)?;
 
     Ok(SkillDescriptor::read(&final_dir))
+}
+
+/// Install a skill advertised by a registry entry (the shop's GitHub-fetch
+/// path). Fetches the entry's files through the injected [`SkillFetcher`], then
+/// runs the **same** [`install`] engine as the local-folder path — so a shop
+/// install is validated before any write and copied atomically, identically to
+/// "Install from folder…". Network lives behind the trait (D-3 seam), so this
+/// stays testable with an injected fake fetcher.
+pub fn install_from_registry(
+    fetcher: &dyn SkillFetcher,
+    entry: &RegistryEntry,
+    target_skills_root: &Path,
+) -> AppResult<SkillDescriptor> {
+    install(&RemoteSkill::new(fetcher, entry.clone()), target_skills_root)
 }
 
 /// Reject any directory name that is not a single, normal path component, so a

@@ -6,8 +6,8 @@
 use crate::state::AppState;
 use serde::Serialize;
 use skill_cellar_core::{
-    self as core, AppError, Conformance, InstalledUsage, LocalDir, ProjectUsage, RegistryResult,
-    SkillDescriptor, TargetKind,
+    self as core, AppError, Conformance, InstalledUsage, LocalDir, ProjectUsage, RegistryEntry,
+    RegistryResult, SkillDescriptor, TargetKind,
 };
 use std::path::PathBuf;
 use tauri::State;
@@ -64,9 +64,9 @@ pub fn check_conformance(skill_md: String, parent_dir_name: String) -> Conforman
     core::conformance::evaluate(&skill_md, &parent_dir_name)
 }
 
-/// Install a skill from a local directory into a target. This is the working
-/// install path for I-1 (the `SkillSource` abstraction). A GitHub-fetching
-/// source — installing directly from a registry entry — is the follow-on.
+/// Install a skill from a local directory into a target (the `SkillSource`
+/// abstraction). Installing directly from a shop registry entry is the sibling
+/// `install_registry_skill`, which shares this same validate-then-copy engine.
 #[tauri::command]
 #[specta::specta]
 pub fn install_local_skill(
@@ -76,6 +76,26 @@ pub fn install_local_skill(
 ) -> CmdResult<SkillDescriptor> {
     let root = skills_root(&state, &target);
     Ok(core::install(&LocalDir::new(source_dir), &root)?)
+}
+
+/// Install a skill from a shop registry entry: fetch its files from GitHub,
+/// then run the **same** validate-then-atomic-copy engine as the local-folder
+/// path (`install_local_skill`). A validation failure returns
+/// `CommandError { kind: "validation_failed", conformance, .. }` and touches
+/// nothing on disk; an unreachable repo surfaces as `kind: "network"`.
+#[tauri::command]
+#[specta::specta]
+pub fn install_registry_skill(
+    state: State<'_, AppState>,
+    entry: RegistryEntry,
+    target: TargetKind,
+) -> CmdResult<SkillDescriptor> {
+    let root = skills_root(&state, &target);
+    Ok(core::install_from_registry(
+        state.skill_fetcher.as_ref(),
+        &entry,
+        &root,
+    )?)
 }
 
 /// Read an installed skill's `SKILL.md` so Craft can load it for editing.

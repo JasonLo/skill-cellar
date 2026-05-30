@@ -1,13 +1,29 @@
 import type { RegistryEntry } from '../api/bindings'
 
+interface SkillCardProps {
+  entry: RegistryEntry
+  /** Install this entry into the active target. Omitted (e.g. outside the
+   *  desktop app) leaves the button disabled. */
+  onInstall?: (entry: RegistryEntry) => void
+  /** True while this card's install is in flight. */
+  busy?: boolean
+  /** Why the button is disabled, when it is (shown as a tooltip). */
+  disabledReason?: string
+}
+
 /**
- * A shop card for a registry entry. Live install pulls the skill from its repo,
- * validates it, then atomically installs — that GitHub-fetch path is the
- * follow-on to I-1 (the install/validate/atomic-copy engine is already done and
- * tested in the core). Until then the button is disabled with a note, and the
- * conformance verdict shows up in the Library once a skill is installed.
+ * A shop card for a registry entry. Install pulls the skill's files from its
+ * repo (GitHub), validates them, then atomically installs — the same
+ * validate-then-atomic-copy engine as "Install from folder…" in the Library
+ * (I-1). The conformance verdict then shows up against the skill in the Library.
  */
-export function SkillCard({ entry }: { entry: RegistryEntry }) {
+export function SkillCard({
+  entry,
+  onInstall,
+  busy = false,
+  disabledReason,
+}: SkillCardProps) {
+  const disabled = !onInstall || busy
   return (
     <article className="card">
       <div className="card-head">
@@ -23,10 +39,11 @@ export function SkillCard({ entry }: { entry: RegistryEntry }) {
         <button
           type="button"
           className="btn"
-          disabled
-          title="Live install (GitHub fetch) lands in the next milestone. To install now, use “Install from folder…” in the Library — same validate + atomic-copy engine."
+          disabled={disabled}
+          title={!onInstall ? disabledReason : undefined}
+          onClick={onInstall ? () => onInstall(entry) : undefined}
         >
-          Install
+          {busy ? 'Installing…' : 'Install'}
         </button>
       </div>
     </article>

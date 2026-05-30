@@ -5,6 +5,7 @@
 import { invoke } from '@tauri-apps/api/core'
 import type {
   Conformance,
+  RegistryEntry,
   RegistryResult,
   SkillDescriptor,
   TargetKind,
@@ -22,6 +23,9 @@ export const api = {
 
   installLocalSkill: (sourceDir: string, target: TargetKind) =>
     invoke<SkillDescriptor>('install_local_skill', { sourceDir, target }),
+
+  installRegistrySkill: (entry: RegistryEntry, target: TargetKind) =>
+    invoke<SkillDescriptor>('install_registry_skill', { entry, target }),
 
   readSkill: (target: TargetKind, dirName: string) =>
     invoke<string>('read_skill', { target, dirName }),

@@ -50,6 +50,21 @@ async installLocalSkill(sourceDir: string, target: TargetKind) : Promise<Result<
 }
 },
 /**
+ * Install a skill from a shop registry entry: fetch its files from GitHub,
+ * then run the **same** validate-then-atomic-copy engine as the local-folder
+ * path (`install_local_skill`). A validation failure returns
+ * `CommandError { kind: "validation_failed", conformance, .. }` and touches
+ * nothing on disk; an unreachable repo surfaces as `kind: "network"`.
+ */
+async installRegistrySkill(entry: RegistryEntry, target: TargetKind) : Promise<Result<SkillDescriptor, CommandError>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("install_registry_skill", { entry, target }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Read an installed skill's `SKILL.md` so Craft can load it for editing.
  */
 async readSkill(target: TargetKind, dirName: string) : Promise<Result<string, CommandError>> {

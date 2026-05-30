@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 // Tauri-tuned Vite config. See https://v2.tauri.app/start/frontend/vite/
 const host = process.env.TAURI_DEV_HOST
@@ -29,5 +29,12 @@ export default defineConfig({
       process.env.TAURI_ENV_PLATFORM === 'windows' ? 'chrome105' : 'es2022',
     minify: process.env.TAURI_ENV_DEBUG ? false : 'esbuild',
     sourcemap: !!process.env.TAURI_ENV_DEBUG,
+  },
+  // Vitest: jsdom for component tests, jest-dom matchers via the setup file.
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./vitest.setup.ts'],
+    include: ['src/**/*.test.{ts,tsx}'],
   },
 })

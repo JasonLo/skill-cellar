@@ -27,6 +27,8 @@ pub fn run() {
         commands::list_skills,
         commands::check_conformance,
         commands::install_local_skill,
+        commands::read_skill,
+        commands::publish_skill,
         commands::set_active_target,
         commands::get_active_target,
         commands::get_usage,

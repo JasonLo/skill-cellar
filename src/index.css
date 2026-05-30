@@ -274,3 +274,76 @@ body {
   color: var(--red);
   border: 1px solid var(--red);
 }
+
+/* Craft editor */
+.craft-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+}
+.craft-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.craft-label {
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.craft-hint {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 11px;
+}
+.craft-input {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+}
+.craft-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.craft-body {
+  min-height: 220px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  resize: vertical;
+}
+.craft-finding-error {
+  color: var(--red);
+  font-size: 12px;
+  margin: 0;
+}
+.craft-finding-warn {
+  color: var(--amber);
+  font-size: 12px;
+  margin: 0;
+}
+.craft-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.craft-blocked-note {
+  color: var(--muted);
+  font-size: 12px;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}

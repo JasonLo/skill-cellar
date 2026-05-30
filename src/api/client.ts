@@ -23,6 +23,12 @@ export const api = {
   installLocalSkill: (sourceDir: string, target: TargetKind) =>
     invoke<SkillDescriptor>('install_local_skill', { sourceDir, target }),
 
+  readSkill: (target: TargetKind, dirName: string) =>
+    invoke<string>('read_skill', { target, dirName }),
+
+  publishSkill: (target: TargetKind, name: string, skillMd: string) =>
+    invoke<SkillDescriptor>('publish_skill', { target, name, skillMd }),
+
   setActiveTarget: (target: TargetKind) =>
     invoke<void>('set_active_target', { target }),
 

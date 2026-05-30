@@ -23,6 +23,9 @@ pub enum AppError {
     #[error("a skill named '{0}' is already installed at the target")]
     AlreadyInstalled(String),
 
+    #[error("unsafe skill directory name '{0}' (must be a single path component)")]
+    UnsafePath(String),
+
     #[error("network unreachable: {0}")]
     Network(String),
 
@@ -41,6 +44,7 @@ impl AppError {
             AppError::SkillMdMissing(_) => "skill_md_missing",
             AppError::ValidationFailed(_) => "validation_failed",
             AppError::AlreadyInstalled(_) => "already_installed",
+            AppError::UnsafePath(_) => "unsafe_path",
             AppError::Network(_) => "network",
             AppError::RegistryUnavailable => "registry_unavailable",
             AppError::NoActiveTarget => "no_active_target",

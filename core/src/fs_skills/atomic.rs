@@ -3,6 +3,7 @@
 //! directory appears complete, or it does not appear at all — never partial.
 
 use crate::error::{AppError, AppResult};
+use std::io::Write;
 use std::path::Path;
 
 /// Copy `src_dir` into place at `final_dir` atomically.
@@ -56,4 +57,26 @@ pub fn atomic_install_dir(src_dir: &Path, final_dir: &Path) -> AppResult<()> {
             Err(AppError::Io(e))
         }
     }
+}
+
+/// Write a single file into `dir` atomically, creating `dir` if needed.
+///
+/// Used by Craft's publish path: a temp file is written *inside* `dir` (so the
+/// final rename is same-filesystem and atomic) and renamed onto `file_name`.
+/// Any sibling files in `dir` are left untouched, so re-publishing a skill
+/// overwrites only the named file. The reader of `dir/file_name` ever sees
+/// either the old bytes or the new bytes, never a partial write.
+pub fn atomic_write_file(dir: &Path, file_name: &str, contents: &str) -> AppResult<()> {
+    std::fs::create_dir_all(dir)?;
+
+    let mut tmp = tempfile::Builder::new()
+        .prefix(".sc-tmp-")
+        .tempfile_in(dir)?;
+    tmp.write_all(contents.as_bytes())?;
+    tmp.flush()?;
+
+    // `persist` renames the temp file onto its destination atomically.
+    tmp.persist(dir.join(file_name))
+        .map_err(|e| AppError::Io(e.error))?;
+    Ok(())
 }

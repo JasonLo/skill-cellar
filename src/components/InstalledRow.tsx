@@ -1,7 +1,13 @@
 import type { SkillDescriptor } from '../api/bindings'
 import { ConformanceBadge } from './ConformanceBadge'
 
-export function InstalledRow({ skill }: { skill: SkillDescriptor }) {
+export function InstalledRow({
+  skill,
+  onEdit,
+}: {
+  skill: SkillDescriptor
+  onEdit?: () => void
+}) {
   return (
     <li className="row">
       <div className="row-main">
@@ -16,6 +22,11 @@ export function InstalledRow({ skill }: { skill: SkillDescriptor }) {
         )}
       </div>
       <ConformanceBadge conformance={skill.conformance} />
+      {onEdit && (
+        <button type="button" className="btn-ghost" onClick={onEdit}>
+          Edit in Craft
+        </button>
+      )}
     </li>
   )
 }

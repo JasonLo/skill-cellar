@@ -1,5 +1,6 @@
 import { Tabs } from './components/Tabs'
 import { TitleBar } from './components/TitleBar'
+import { CraftScreen } from './screens/CraftScreen'
 import { LibraryScreen } from './screens/LibraryScreen'
 import { ShopScreen } from './screens/ShopScreen'
 import { UsageScreen } from './screens/UsageScreen'
@@ -14,6 +15,8 @@ function ActiveScreen() {
       return <LibraryScreen />
     case 'usage':
       return <UsageScreen />
+    case 'craft':
+      return <CraftScreen />
     default:
       return (
         <div className="screen empty">

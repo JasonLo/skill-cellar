@@ -3,13 +3,19 @@
 //! network-free and hermetically testable. Tests inject fakes.
 
 use crate::error::AppResult;
-use crate::registry::RegistryManifest;
 
-/// Fetches the curated registry manifest from its remote source.
+/// Fetches the curated catalog document from its remote source (a public,
+/// read-only GitHub gist — I-5).
+///
+/// Returns the **raw JSON text** rather than a parsed manifest on purpose: the
+/// core owns parsing and per-entry catalog-schema validation, so a single
+/// malformed entry can be skipped (I-5 outcome 2) while the crate stays
+/// network-free (P-14). The shell's `HttpFetcher` only performs the HTTP GET.
 ///
 /// Synchronous on purpose: it keeps the core free of an async runtime, and the
 /// Tauri command layer already runs install/registry work off the UI thread.
-/// An offline / unreachable remote must surface as [`crate::error::AppError::Network`].
+/// An offline / unreachable source must surface as
+/// [`crate::error::AppError::Network`].
 pub trait RegistryFetcher: Send + Sync {
-    fn fetch_manifest(&self) -> AppResult<RegistryManifest>;
+    fn fetch_catalog(&self) -> AppResult<String>;
 }

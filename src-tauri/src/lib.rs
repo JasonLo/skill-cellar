@@ -12,14 +12,16 @@ use http_skill_fetcher::HttpSkillFetcher;
 use state::AppState;
 use tauri::Manager;
 
-/// Curated-registry manifest URL.
+/// Curated-catalog source: the raw content of a public, read-only GitHub gist
+/// (I-5). A gist is editable without an app release and needs no auth, and the
+/// `/raw` URL always serves the latest revision.
 ///
-/// PLACEHOLDER: the canonical location of the registry manifest is still an
-/// open question (to be settled in specs/DECISIONS.md under intent I-1). Until
-/// it is fixed, an unreachable/placeholder URL simply means `get_registry`
-/// serves the on-disk cache or the bundled snapshot — the shop stays usable offline.
+/// PLACEHOLDER: the canonical gist id is not yet provisioned — swap `GIST_ID`
+/// for the real one when it exists. Until then this resolves to a 404, which
+/// `get_registry` treats as unreachable: the shop serves the on-disk cache or
+/// the bundled snapshot and stays usable offline.
 const REGISTRY_URL: &str =
-    "https://raw.githubusercontent.com/agentskills/registry/main/registry.json";
+    "https://gist.githubusercontent.com/agentskills/GIST_ID/raw/catalog.json";
 
 /// GitHub Contents API base, used by the shop's GitHub-fetch install to pull a
 /// registry entry's skill files. Unauthenticated + read-only (no secrets).

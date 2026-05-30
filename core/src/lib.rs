@@ -29,6 +29,7 @@ pub use fs_skills::{
 };
 pub use projects::TargetKind;
 pub use registry::{
-    get_registry, RegistryEntry, RegistryFetcher, RegistryManifest, RegistryResult, RegistrySource,
+    get_registry, parse_catalog, resolve_catalog, RegistryEntry, RegistryFetcher, RegistryManifest,
+    RegistryResult, RegistrySource, DEFAULT_STALENESS,
 };
 pub use usage::{usage_report, InstalledUsage, ProjectUsage, SkillCount, UsageReport};

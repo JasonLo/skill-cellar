@@ -1,9 +1,11 @@
-//! The live registry fetcher: a blocking HTTP GET of the curated manifest.
-//! This is the only network code in the app, and it is confined to the shell
-//! (the core stays network-free). A failure surfaces as `AppError::Network`,
-//! which `core::get_registry` turns into the cache/bundled fallback.
+//! The live catalog fetcher: a blocking HTTP GET of the curated catalog gist's
+//! raw content. This is the only catalog network code in the app, and it is
+//! confined to the shell (the core stays network-free). It returns the raw JSON
+//! text; the core parses it, validates each entry, and skips malformed ones
+//! (I-5). A failure surfaces as `AppError::Network`, which `core::get_registry`
+//! turns into the cache/bundled fallback.
 
-use skill_cellar_core::{AppError, AppResult, RegistryFetcher, RegistryManifest};
+use skill_cellar_core::{AppError, AppResult, RegistryFetcher};
 
 pub struct HttpFetcher {
     client: reqwest::blocking::Client,
@@ -25,15 +27,14 @@ impl HttpFetcher {
 }
 
 impl RegistryFetcher for HttpFetcher {
-    fn fetch_manifest(&self) -> AppResult<RegistryManifest> {
-        let resp = self
-            .client
+    fn fetch_catalog(&self) -> AppResult<String> {
+        self.client
             .get(&self.url)
             .send()
             .map_err(|e| AppError::Network(e.to_string()))?
             .error_for_status()
-            .map_err(|e| AppError::Network(e.to_string()))?;
-        resp.json::<RegistryManifest>()
+            .map_err(|e| AppError::Network(e.to_string()))?
+            .text()
             .map_err(|e| AppError::Network(e.to_string()))
     }
 }

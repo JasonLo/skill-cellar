@@ -22,7 +22,7 @@ mod parse;
 pub use fetcher::RegistryFetcher;
 pub use parse::parse_catalog;
 
-use crate::error::AppResult;
+use crate::error::{AppError, AppResult};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
@@ -142,7 +142,18 @@ pub fn resolve_catalog(
 /// caller treats them identically (fall back to cache/bundled).
 fn fetch_and_parse(fetcher: &dyn RegistryFetcher) -> AppResult<RegistryManifest> {
     let text = fetcher.fetch_catalog()?;
-    parse::parse_catalog(&text)
+    let manifest = parse::parse_catalog(&text)?;
+    // A catalog that parses but yields zero usable entries must not overwrite a
+    // good cache with emptiness. Treat it like an unreachable source so the
+    // fallback chain (cache, then bundled) keeps the Featured shop populated —
+    // tolerating one bad entry (I-5 outcome 2) must not become tolerating a
+    // wholesale-broken gist at the cost of the I-1 offline guarantee.
+    if manifest.entries.is_empty() {
+        return Err(AppError::Network(
+            "catalog fetched but contained no valid entries".to_string(),
+        ));
+    }
+    Ok(manifest)
 }
 
 fn to_unix(t: SystemTime) -> u64 {
@@ -293,6 +304,46 @@ mod tests {
             resolve_catalog(&OfflineFetcher, dir.path(), at(t0 + 50 * 3_600), max_age).unwrap();
         assert_eq!(offline.source, RegistrySource::Cache);
         assert_eq!(offline.manifest.entries[0].name, "v2");
+    }
+
+    /// A well-formed envelope whose entries are *all* invalid must not
+    /// overwrite a good cache with emptiness: it is treated like an unreachable
+    /// source so the offline fallback (I-1) keeps the Featured shop populated.
+    #[test]
+    fn all_invalid_catalog_does_not_poison_cache() {
+        let dir = tempfile::tempdir().unwrap();
+        let max_age = Duration::from_secs(24 * 60 * 60);
+        let t0 = 1_000_000;
+
+        // Prime a good cache at t0.
+        let primed = resolve_catalog(
+            &GistFetcher(sample_json("good")),
+            dir.path(),
+            at(t0),
+            max_age,
+        )
+        .unwrap();
+        assert_eq!(primed.source, RegistrySource::Network);
+
+        // Stale, and the gist now returns a parseable envelope whose only entry
+        // is invalid (missing `repo`). The empty parse result must not clobber
+        // the cache — serve the cached good copy instead.
+        let all_bad = r#"{
+            "schema_version": 1,
+            "generated_at": "2026-05-30T00:00:00Z",
+            "entries": [
+                { "name": "broken", "description": "no repo", "featured": false }
+            ]
+        }"#;
+        let res = resolve_catalog(
+            &GistFetcher(all_bad.to_string()),
+            dir.path(),
+            at(t0 + 25 * 3_600),
+            max_age,
+        )
+        .unwrap();
+        assert_eq!(res.source, RegistrySource::Cache);
+        assert_eq!(res.manifest.entries[0].name, "good");
     }
 
     /// I-1 offline guarantee (kept honest here): with no cache and an

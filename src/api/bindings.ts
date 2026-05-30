@@ -37,9 +37,9 @@ async checkConformance(skillMd: string, parentDirName: string) : Promise<Conform
     return await TAURI_INVOKE("check_conformance", { skillMd, parentDirName });
 },
 /**
- * Install a skill from a local directory into a target. This is the working
- * install path for I-1 (the `SkillSource` abstraction). A GitHub-fetching
- * source — installing directly from a registry entry — is the follow-on.
+ * Install a skill from a local directory into a target (the `SkillSource`
+ * abstraction). Installing directly from a shop registry entry is the sibling
+ * `install_registry_skill`, which shares this same validate-then-copy engine.
  */
 async installLocalSkill(sourceDir: string, target: TargetKind) : Promise<Result<SkillDescriptor, CommandError>> {
     try {

@@ -37,6 +37,10 @@ reqwest = { version = "0.12", default-features = false, features = [
     "gzip",
 ] }
 skill-cellar-core = { path = "../core", features = ["specta"] }
+# The shop's GitHub-fetch install (D-14) materializes an entry's files into a
+# temp dir before the core's validate-then-copy install. Pinned to match the
+# core: newer tempfile pulls getrandom 0.4 which needs edition2024 (Cargo >=1.78).
+tempfile = "=3.8.1"
 
 # Type-safe TS bindings generated from the #[tauri::command] fns.
 # Pinned to a mutually-compatible rc.20 set (matches `core`'s specta = rc.20).

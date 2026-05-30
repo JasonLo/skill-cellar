@@ -3393,6 +3393,7 @@ dependencies = [
  "tauri-plugin-dialog",
  "tauri-plugin-mcp-bridge",
  "tauri-specta",
+ "tempfile",
 ]
 
 [[package]]

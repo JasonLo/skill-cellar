@@ -49,21 +49,30 @@ pub fn parse_catalog(json: &str) -> AppResult<RegistryManifest> {
 /// required fields present and well-typed) and carry non-empty, sane values.
 /// Returns `None` for anything that fails, so the caller drops it silently.
 fn valid_entry(value: Value) -> Option<RegistryEntry> {
-    let entry: RegistryEntry = serde_json::from_value(value).ok()?;
+    let mut entry: RegistryEntry = serde_json::from_value(value).ok()?;
 
     let name_ok = !entry.name.trim().is_empty();
     let desc_ok = !entry.description.trim().is_empty();
     // `repo` must look like `owner/name` so the install fetch (D-14) has a
-    // resolvable target; reject empties and anything without a single segment.
+    // resolvable target. Trim first so a stray space in the hand-edited gist
+    // doesn't break the fetch, then reject empties and anything that isn't
+    // exactly two non-empty segments.
+    let repo = entry.repo.trim();
     let repo_ok = {
-        let mut parts = entry.repo.split('/');
+        let mut parts = repo.split('/');
         matches!(
             (parts.next(), parts.next(), parts.next()),
             (Some(owner), Some(name), None) if !owner.is_empty() && !name.is_empty()
         )
     };
 
-    (name_ok && desc_ok && repo_ok).then_some(entry)
+    if !(name_ok && desc_ok && repo_ok) {
+        return None;
+    }
+    // Persist the normalized form so the cached/stored `repo` is exactly what
+    // the install fetch will use.
+    entry.repo = repo.to_string();
+    Some(entry)
 }
 
 #[cfg(test)]
@@ -89,6 +98,23 @@ mod tests {
         let manifest = parse_catalog(json).expect("envelope is well-formed");
         let names: Vec<_> = manifest.entries.iter().map(|e| e.name.as_str()).collect();
         assert_eq!(names, ["good-a", "good-b"]);
+    }
+
+    #[test]
+    fn trims_surrounding_whitespace_in_repo() {
+        // A stray space around an otherwise-valid `repo` is tolerated and
+        // normalized, rather than dropped or stored verbatim.
+        let json = r#"{
+            "schema_version": 1,
+            "generated_at": "2026-05-29T00:00:00Z",
+            "entries": [
+                { "name": "padded", "description": "ok", "repo": "  acme/a  ", "featured": true }
+            ]
+        }"#;
+
+        let manifest = parse_catalog(json).expect("envelope is well-formed");
+        assert_eq!(manifest.entries.len(), 1);
+        assert_eq!(manifest.entries[0].repo, "acme/a");
     }
 
     #[test]

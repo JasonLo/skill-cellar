@@ -31,9 +31,10 @@ reqwest = { version = "0.12", default-features = false, features = [
 skill-cellar-core = { path = "../core", features = ["specta"] }
 
 # Type-safe TS bindings generated from the #[tauri::command] fns.
-# NOTE: these rc versions are pending verification on the first real desktop
-# build (this repo's CI/dev environment cannot link the Tauri webview). Align
-# specta / specta-typescript / tauri-specta to a mutually-compatible set.
-specta = { version = "2.0.0-rc.20", features = ["derive"] }
-specta-typescript = "0.0.7"
-tauri-specta = { version = "2.0.0-rc.21", features = ["derive", "typescript"] }
+# Pinned to a mutually-compatible rc.20 set (matches `core`'s specta = rc.20).
+# Exact `=` pins are required: caret on a pre-release floats forward — e.g.
+# `^2.0.0-rc.21` resolves tauri-specta to rc.22, which demands specta rc.22 and
+# conflicts with specta-typescript 0.0.7 (which pins specta rc.20).
+specta = { version = "=2.0.0-rc.20", features = ["derive"] }
+specta-typescript = "=0.0.7"
+tauri-specta = { version = "=2.0.0-rc.20", features = ["derive", "typescript"] }

@@ -37,7 +37,12 @@ pub fn run() {
     #[cfg(debug_assertions)]
     builder
         .export(
-            specta_typescript::Typescript::default(),
+            // `total: u64` (usage counts) maps to a TS `number`: Tauri IPC
+            // serializes via serde_json, which emits u64 as a JSON number, so
+            // `number` matches the wire format. specta's default (Fail) aborts
+            // on any bigint type.
+            specta_typescript::Typescript::default()
+                .bigint(specta_typescript::BigIntExportBehavior::Number),
             "../src/api/bindings.ts",
         )
         .expect("failed to export TypeScript bindings");

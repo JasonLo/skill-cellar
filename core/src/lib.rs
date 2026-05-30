@@ -23,7 +23,7 @@ pub mod usage;
 
 pub use conformance::{Conformance, Finding, Severity, Verdict};
 pub use error::{AppError, AppResult};
-pub use fs_skills::{install, SkillDescriptor, SkillSource};
+pub use fs_skills::{install, LocalDir, SkillDescriptor, SkillSource};
 pub use projects::TargetKind;
 pub use registry::{
     get_registry, RegistryEntry, RegistryFetcher, RegistryManifest, RegistryResult, RegistrySource,

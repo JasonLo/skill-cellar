@@ -4,7 +4,7 @@ Guidance for Claude Code (claude.ai/code) when working in this repo.
 
 ## What this repo is
 
-**skill-cellar** — a Tauri desktop GUI for managing AI-agent skills: shop, install (project or global), usage analytics, and crafting, all conformant to the agentskills.io spec. Librarian, not an agent runner. The authoritative product/scope lives under `specs/` (`CONSTITUTION.md`, `INTENT/`) — see the section below.
+**skill-cellar** — a terminal UI (OpenTUI on Bun) for managing AI-agent skills: shop, install (project or global), usage analytics, and crafting, all conformant to the agentskills.io spec. Librarian, not an agent runner. The authoritative product/scope lives under `specs/` (`CONSTITUTION.md`, `INTENT/`) — see the section below.
 
 <!-- lite-spec:pointer-block:start -->
 

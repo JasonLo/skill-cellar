@@ -16,7 +16,7 @@ verdict_checked_at: 2026-05-30T02:53:44Z
 # Intent: Usage analytics
 
 - **Author:** Jason Lo
-- **Last updated:** 2026-05-29
+- **Last updated:** 2026-05-30
 
 ## Problem
 
@@ -35,10 +35,11 @@ Knowing which installed skills actually get used means reading Claude Code trans
 
 ## Constraints
 
-- Tauri v2 (Rust core) + React/TypeScript/Vite; no Python.
+- OpenTUI on the Bun runtime + React + TypeScript via OpenTUI's React reconciler; no Vite, Rust, or Python.
 - Usage analytics are read-only over existing JSONL transcripts; no new instrumentation.
 - The filesystem is the single source of truth; counts are derived on read, not persisted as authoritative state.
 - Fully functional offline — transcript parsing is local-only.
 
 ## Change Log
 - **2026-05-29** — Initial draft. Outcome relocated from I-1 during the 4-way split of the original product-level intent.
+- **2026-05-30** — Updated Constraints to reflect substrate change (Tauri/Rust/Vite → OpenTUI/Bun/TypeScript) per CONSTITUTION amendment of 2026-05-30. Product outcome (per-skill invocation counts from local JSONL transcripts) unchanged. The `cargo:` test citation will migrate to a bun-test/vitest equivalent as the substrate replacement lands.

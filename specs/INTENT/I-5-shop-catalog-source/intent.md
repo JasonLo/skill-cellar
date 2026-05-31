@@ -9,14 +9,14 @@ superseded_by: null
 verdict_outcomes_passed: 0
 verdict_outcomes_passed_by_agent: 0
 verdict_outcomes_passed_by_test: 0
-verdict_outcomes_total: 3
-verdict_checked_at: 2026-05-30T03:15:19Z
+verdict_outcomes_total: 0
+verdict_checked_at: 2026-05-31T02:11:17Z
 ---
 
 # Intent: Shop catalog source
 
 - **Author:** Jason Lo
-- **Last updated:** 2026-05-29
+- **Last updated:** 2026-05-30
 
 ## Problem
 
@@ -40,7 +40,7 @@ The Shop has no live source of truth for *which skills exist to install*. D-3 de
 
 ## Constraints
 
-- Rust core, no Python (P-2); fetch via the existing `SkillSource` abstraction (D-3).
+- TypeScript backend on the Bun runtime, no Rust or Python (P-2); fetch via the existing `SkillSource` abstraction (D-3).
 - The catalog is NOT usage metadata and MUST NOT be stored in or depend on Turso; it MUST work with sync disabled (P-4, P-7) and must never live in the sync store (P-5, P-8).
 - Local-first: a cached catalog MUST back the Shop whenever the gist is unreachable, consistent with I-1's offline fallback.
 - Gist access is read-only and unauthenticated (public gist); no secrets in the app.
@@ -48,3 +48,4 @@ The Shop has no live source of truth for *which skills exist to install*. D-3 de
 
 ## Change Log
 - **2026-05-29** — Initial draft.
+- **2026-05-30** — Updated Constraints to reflect substrate change (Rust core → TypeScript on Bun) per CONSTITUTION amendment of 2026-05-30. The earlier 4-intent refine sweep missed I-5; spec-check surfaced the obsolete P-2 reference. Product outcomes (gist load + cache, schema-invalid skip, staleness refresh) unchanged. Existing `cargo:` test citations will migrate to bun-test/vitest equivalents as the substrate replacement lands.

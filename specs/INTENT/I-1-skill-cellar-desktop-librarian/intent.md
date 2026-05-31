@@ -2,21 +2,21 @@
 id: I-1
 title: Shop, install & conformance
 slug: skill-cellar-desktop-librarian
-status: in_progress
+status: draft
 opened: 2026-05-29
 closed: null
 superseded_by: null
-verdict_outcomes_passed: 3
+verdict_outcomes_passed: 0
 verdict_outcomes_passed_by_agent: 0
-verdict_outcomes_passed_by_test: 3
-verdict_outcomes_total: 4
-verdict_checked_at: 2026-05-30T03:20:38Z
+verdict_outcomes_passed_by_test: 0
+verdict_outcomes_total: 0
+verdict_checked_at: 2026-05-31T02:11:17Z
 ---
 
 # Intent: Shop, install & conformance
 
 - **Author:** Jason Lo
-- **Last updated:** 2026-05-29
+- **Last updated:** 2026-05-30
 
 ## Problem
 
@@ -41,7 +41,7 @@ Acquiring an AI-agent skill today is CLI- and filesystem-only: installing means 
 
 ## Constraints
 
-- Tauri v2 shell (Rust core, native webview) + React + TypeScript + Vite frontend; no Python.
+- OpenTUI on the Bun runtime + React + TypeScript via OpenTUI's React reconciler; no Vite, Rust, or Python.
 - The filesystem (skill directories) is the single source of truth — no hidden database of installed state.
 - Conformance mirrors the official `skills-ref` rules (`name` ≤64 chars and matches the parent dir; `description` 1–1024 chars).
 - The app is fully functional offline; the registry cache backs the shop when GitHub is unreachable.
@@ -51,3 +51,4 @@ Acquiring an AI-agent skill today is CLI- and filesystem-only: installing means 
 - **2026-05-29** — Replaced the telemetry/network non-goal with an opt-in, metadata-only sync boundary and added outcomes for the sync guarantee, to align with constitution P-4/P-7/P-8.
 - **2026-05-29** — Narrowed scope to Shop/Install/Conformance (outcomes for atomic install, conformance verdict, registry offline fallback). Relocated usage analytics → I-2, Craft editor → I-3, and the sync privacy boundary → I-4, so each feature area can reach `complete` independently rather than blocking on the whole product. Retitled from "skill-cellar desktop librarian"; slug retained (immutable). verdict_* left for ls-check to recompute.
 - **2026-05-29** — Split the single "install from the shop" outcome into two: a working **local-folder** install (validate → atomic copy, now reachable end-to-end via "Install from folder…" in the Library, backed by the tested core engine) and a separate, **not-yet-met shop (GitHub) install** outcome (fetch + same engine), which stays deferred per D-3. Reason: the prior outcome was deriving `complete` from a core unit test while the shop's Install button was disabled, overstating delivery; separating the triggers lets ls-check report an honest status.
+- **2026-05-30** — Updated Constraints to reflect substrate change (Tauri/Rust/Vite → OpenTUI/Bun/TypeScript) per CONSTITUTION amendment of 2026-05-30. Product outcomes (atomic install, conformance verdict, registry offline fallback) unchanged. Test citations still point at `cargo:` tests that exist today; they will migrate to `bun test`/`vitest` equivalents as the substrate replacement lands, at which point /spec-check will flag the citation drift as the work-tracking signal.

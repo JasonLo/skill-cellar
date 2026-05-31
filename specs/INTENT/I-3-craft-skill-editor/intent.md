@@ -16,7 +16,7 @@ verdict_checked_at: 2026-05-30T04:02:49Z
 # Intent: Craft skill editor
 
 - **Author:** Jason Lo
-- **Last updated:** 2026-05-29
+- **Last updated:** 2026-05-30
 
 ## Problem
 
@@ -35,9 +35,10 @@ Authoring or editing a skill today means hand-editing `SKILL.md` and discovering
 
 ## Constraints
 
-- Tauri v2 (Rust core) + React/TypeScript/Vite; no Python.
+- OpenTUI on the Bun runtime + React + TypeScript via OpenTUI's React reconciler; no Vite, Rust, or Python.
 - The publish/install gate MUST use the same agentskills.io / `skills-ref` validation rules as the shop install path (I-1) — one validation source of truth, mirrored, not forked.
 - The filesystem is the single source of truth; Craft edits skill directories directly.
 
 ## Change Log
 - **2026-05-29** — Initial draft. Outcome relocated from I-1 during the 4-way split of the original product-level intent.
+- **2026-05-30** — Updated Constraints to reflect substrate change (Tauri/Rust/Vite → OpenTUI/Bun/TypeScript) per CONSTITUTION amendment of 2026-05-30. Product outcome (Craft blocks publish/install on invalid frontmatter) unchanged. The vitest citation `src/screens/Craft.test.tsx` may need rework as the UI shape shifts from DOM React to OpenTUI components (no `screens` metaphor in a TUI; likely a different file path post-migration) — /spec-check will flag the drift when the file moves.

@@ -2,15 +2,15 @@
 id: I-5
 title: Shop catalog source
 slug: shop-catalog-source
-status: draft
+status: complete
 opened: 2026-05-29
-closed: null
+closed: 2026-05-30
 superseded_by: null
-verdict_outcomes_passed: 0
+verdict_outcomes_passed: 3
 verdict_outcomes_passed_by_agent: 0
-verdict_outcomes_passed_by_test: 0
-verdict_outcomes_total: 0
-verdict_checked_at: 2026-05-31T02:11:17Z
+verdict_outcomes_passed_by_test: 3
+verdict_outcomes_total: 3
+verdict_checked_at: 2026-05-30T22:20:00Z
 ---
 
 # Intent: Shop catalog source
@@ -24,9 +24,9 @@ The Shop has no live source of truth for *which skills exist to install*. D-3 de
 
 ## Outcome
 
-- **WHEN** the Shop is opened **THE SYSTEM SHALL** load the catalog from the configured GitHub gist and persist the fetched copy to the local registry cache for offline reuse. [test: cargo:catalog_loads_from_gist_and_caches]
-- **WHEN** a fetched catalog entry fails catalog-schema validation **THE SYSTEM SHALL** skip only that entry and surface the remaining valid entries, never failing the whole Shop on a single malformed entry. [test: cargo:catalog_skips_invalid_entries]
-- **WHEN** the cached catalog is older than a staleness threshold (TBD — e.g. 24h) and the network is reachable **THE SYSTEM SHALL** refresh it from the gist; otherwise it SHALL serve the cached copy. [test: cargo:catalog_refreshes_when_stale]
+- **WHEN** the Shop is opened **THE SYSTEM SHALL** load the catalog from the configured GitHub gist and persist the fetched copy to the local registry cache for offline reuse. [test: vitest:src/core/registry/registry.test.ts -t "catalog_loads_from_gist_and_caches"]
+- **WHEN** a fetched catalog entry fails catalog-schema validation **THE SYSTEM SHALL** skip only that entry and surface the remaining valid entries, never failing the whole Shop on a single malformed entry. [test: vitest:src/core/registry/registry.test.ts -t "catalog_skips_invalid_entries"]
+- **WHEN** the cached catalog is older than a staleness threshold (TBD — e.g. 24h) and the network is reachable **THE SYSTEM SHALL** refresh it from the gist; otherwise it SHALL serve the cached copy. [test: vitest:src/core/registry/registry.test.ts -t "catalog_refreshes_when_stale"]
 
 ## Non-Goals
 
@@ -49,3 +49,4 @@ The Shop has no live source of truth for *which skills exist to install*. D-3 de
 ## Change Log
 - **2026-05-29** — Initial draft.
 - **2026-05-30** — Updated Constraints to reflect substrate change (Rust core → TypeScript on Bun) per CONSTITUTION amendment of 2026-05-30. The earlier 4-intent refine sweep missed I-5; spec-check surfaced the obsolete P-2 reference. Product outcomes (gist load + cache, schema-invalid skip, staleness refresh) unchanged. Existing `cargo:` test citations will migrate to bun-test/vitest equivalents as the substrate replacement lands.
+- **2026-05-30** — Migrated the three test citations from `cargo:` to `vitest:` against the ported TypeScript registry module at `src/core/registry/`. The cited tests (gist load + cache, malformed-entry skip, staleness-gated refresh) all green; the staleness threshold remains a 24h default exposed as `DEFAULT_STALENESS_SECONDS`.

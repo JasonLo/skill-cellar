@@ -1,41 +1,17 @@
-import { Tabs } from './components/Tabs'
-import { TitleBar } from './components/TitleBar'
-import { CraftScreen } from './screens/CraftScreen'
-import { LibraryScreen } from './screens/LibraryScreen'
-import { ShopScreen } from './screens/ShopScreen'
-import { UsageScreen } from './screens/UsageScreen'
-import { AppProvider, useApp } from './state/AppContext'
-
-function ActiveScreen() {
-  const { tab } = useApp()
-  switch (tab) {
-    case 'shop':
-      return <ShopScreen />
-    case 'library':
-      return <LibraryScreen />
-    case 'usage':
-      return <UsageScreen />
-    case 'craft':
-      return <CraftScreen />
-    default:
-      return (
-        <div className="screen empty">
-          This area is part of a later milestone.
-        </div>
-      )
-  }
-}
-
-export default function App() {
+/**
+ * Root OpenTUI component. The full library/shop/usage/craft surface will
+ * land alongside the OpenTUI substrate; until then this renders a single
+ * informational pane so the binary boots and a future screen tree can hang
+ * off this component.
+ */
+export function App(): JSX.Element {
   return (
-    <AppProvider>
-      <div className="app">
-        <TitleBar />
-        <Tabs />
-        <main className="content">
-          <ActiveScreen />
-        </main>
-      </div>
-    </AppProvider>
+    <box flexDirection="column" padding={1}>
+      <text>skill-cellar — OpenTUI shell</text>
+      <text>
+        Core engine ready (src/core/): conformance, fs-skills, registry,
+        usage, sync. UI surface is under construction.
+      </text>
+    </box>
   )
 }

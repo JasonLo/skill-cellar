@@ -24,7 +24,7 @@ Knowing which installed skills actually get used means reading Claude Code trans
 
 ## Outcome
 
-- **WHEN** the Usage screen is opened **THE SYSTEM SHALL** report per-skill invocation counts parsed from local Claude Code JSONL transcripts, grouped by project. [test: cargo:usage_counts_skill_invocations_by_project]
+- **WHEN** the Usage screen is opened **THE SYSTEM SHALL** report per-skill invocation counts parsed from local Claude Code JSONL transcripts, grouped by project. [test: vitest:src/core/usage/usage.test.ts -t "usage_counts_skill_invocations_by_project"]
 
 ## Non-Goals
 
@@ -43,3 +43,4 @@ Knowing which installed skills actually get used means reading Claude Code trans
 ## Change Log
 - **2026-05-29** — Initial draft. Outcome relocated from I-1 during the 4-way split of the original product-level intent.
 - **2026-05-30** — Updated Constraints to reflect substrate change (Tauri/Rust/Vite → OpenTUI/Bun/TypeScript) per CONSTITUTION amendment of 2026-05-30. Product outcome (per-skill invocation counts from local JSONL transcripts) unchanged. The `cargo:` test citation will migrate to a bun-test/vitest equivalent as the substrate replacement lands.
+- **2026-05-30** — Migrated the test citation from `cargo:` to `vitest:` against the ported TypeScript usage parser at `src/core/usage/`. Tolerant JSONL parsing and the by-project grouping behavior preserved verbatim.

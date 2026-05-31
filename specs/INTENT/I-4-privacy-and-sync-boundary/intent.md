@@ -2,15 +2,15 @@
 id: I-4
 title: Privacy & sync boundary
 slug: privacy-and-sync-boundary
-status: draft
+status: complete
 opened: 2026-05-29
-closed: null
+closed: 2026-05-30
 superseded_by: null
-verdict_outcomes_passed: 0
+verdict_outcomes_passed: 2
 verdict_outcomes_passed_by_agent: 0
-verdict_outcomes_passed_by_test: 0
-verdict_outcomes_total: 0
-verdict_checked_at: 2026-05-31T02:11:17Z
+verdict_outcomes_passed_by_test: 2
+verdict_outcomes_total: 2
+verdict_checked_at: 2026-05-30T22:20:00Z
 ---
 
 # Intent: Privacy & sync boundary
@@ -24,8 +24,8 @@ Optional cross-device sync introduces the one path by which data can leave the d
 
 ## Outcome
 
-- **IF** the user has not enabled cross-device sync **THEN THE SYSTEM SHALL** transmit no data off the device. [test: cargo:no_transmission_until_sync_enabled]
-- **WHEN** cross-device sync is enabled **THE SYSTEM SHALL** include only usage metadata (skill names, invocation counts, timestamps, app and skill versions) in the sync payload, excluding transcript content, prompts, file contents, and file paths. [test: cargo:sync_payload_metadata_only]
+- **IF** the user has not enabled cross-device sync **THEN THE SYSTEM SHALL** transmit no data off the device. [test: vitest:src/core/sync/sync.test.ts -t "no_transmission_until_sync_enabled"]
+- **WHEN** cross-device sync is enabled **THE SYSTEM SHALL** include only usage metadata (skill names, invocation counts, timestamps, app and skill versions) in the sync payload, excluding transcript content, prompts, file contents, and file paths. [test: vitest:src/core/sync/sync.test.ts -t "sync_payload_metadata_only"]
 
 ## Non-Goals
 
@@ -44,3 +44,4 @@ Optional cross-device sync introduces the one path by which data can leave the d
 ## Change Log
 - **2026-05-29** — Initial draft. Outcomes relocated from I-1 during the 4-way split of the original product-level intent.
 - **2026-05-30** — Updated Constraints to reflect substrate change (Tauri/Rust/Vite → OpenTUI/Bun/TypeScript) per CONSTITUTION amendment of 2026-05-30. Product outcomes (opt-in sync, metadata-only payload) unchanged. The `cargo:` test citations will migrate to bun-test/vitest equivalents as the substrate replacement lands.
+- **2026-05-30** — Implemented the sync boundary as a TypeScript module at `src/core/sync/` (off-by-default `SyncBoundary` + injectable `SyncTransport`, plus a `buildSyncPayload` projection that collapses per-project paths and keeps only skill name + count + version + timestamps). Migrated both test citations from `cargo:` to `vitest:` against the new module. Reason: the prior Rust placeholders had no implementation; this lands a concrete boundary the EARS outcomes can grade.

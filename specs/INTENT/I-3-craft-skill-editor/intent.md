@@ -24,7 +24,7 @@ Authoring or editing a skill today means hand-editing `SKILL.md` and discovering
 
 ## Outcome
 
-- **WHILE** editing a skill in Craft **THE SYSTEM SHALL** block publish or install of a skill whose frontmatter fails spec validation and display the failing rule inline. [test: vitest:src/screens/Craft.test.tsx -t "blocks publish on invalid frontmatter"]
+- **WHILE** editing a skill in Craft **THE SYSTEM SHALL** block publish or install of a skill whose frontmatter fails spec validation and display the failing rule inline. [test: vitest:src/core/fs-skills/publish.test.ts -t "blocks publish on invalid frontmatter"]
 
 ## Non-Goals
 
@@ -42,3 +42,4 @@ Authoring or editing a skill today means hand-editing `SKILL.md` and discovering
 ## Change Log
 - **2026-05-29** — Initial draft. Outcome relocated from I-1 during the 4-way split of the original product-level intent.
 - **2026-05-30** — Updated Constraints to reflect substrate change (Tauri/Rust/Vite → OpenTUI/Bun/TypeScript) per CONSTITUTION amendment of 2026-05-30. Product outcome (Craft blocks publish/install on invalid frontmatter) unchanged. The vitest citation `src/screens/Craft.test.tsx` may need rework as the UI shape shifts from DOM React to OpenTUI components (no `screens` metaphor in a TUI; likely a different file path post-migration) — /spec-check will flag the drift when the file moves.
+- **2026-05-30** — Migrated the test citation from the DOM-React `src/screens/Craft.test.tsx` to the core-level `src/core/fs-skills/publish.test.ts`. The publish gate now lives in `publishSkill()` (same code path the eventual OpenTUI surface will call), and the test verifies (a) publish throws `ValidationFailedError` on invalid frontmatter, (b) the failing rule is surfaced on the error's `conformance.findings[]` so the UI can display it inline, and (c) no FS side effects on rejection. The DOM-React Craft screen is being retired alongside Vite/Tauri; once the OpenTUI surface lands, this citation can be augmented with an OpenTUI-level inline-display check via an agent prompt if the SHALL's display clause needs UI-level verification.

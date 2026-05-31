@@ -8,13 +8,13 @@
 //! block with `type == "tool_use"`, `name == "Skill"`, and `input.skill ==
 //! "<name>"`. The project key is the top-level `cwd` recorded on the line — the
 //! authoritative working directory — rather than the lossy slash→hyphen folder
-//! encoding under `projects/` (see DECISIONS D-7).
+//! encoding under `projects/`.
 //!
 //! Transcripts are an external, evolving format, so parsing is tolerant: every
 //! line is read as a generic `serde_json::Value` and any line that fails to
 //! parse, or that isn't a Skill-bearing assistant line, is simply skipped — the
-//! report never errors on a bad line (see DECISIONS D-8). Counts are derived on
-//! read and never persisted (P-5).
+//! report never errors on a bad line. Counts are derived on read and never
+//! persisted (P-5).
 
 use crate::error::AppResult;
 use serde::{Deserialize, Serialize};

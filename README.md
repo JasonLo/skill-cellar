@@ -14,8 +14,8 @@ analytics and a curated shop.
 > React UI is scaffolded. Install from a local folder works today; shop install from
 > GitHub and the Craft editor are not yet wired (see the roadmap). The authoritative spec
 > lives under [`specs/`](specs/): non-negotiable principles in
-> [`CONSTITUTION.md`](specs/CONSTITUTION.md), product scope per intent in
-> [`INTENT/`](specs/INTENT/), and the engineering log in [`DECISIONS.md`](specs/DECISIONS.md).
+> [`CONSTITUTION.md`](specs/CONSTITUTION.md) and product scope per intent in
+> [`INTENT/`](specs/INTENT/).
 
 ## What it does
 

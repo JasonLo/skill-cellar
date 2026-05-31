@@ -39,8 +39,6 @@ The expanded scope must be reflected in the human-owned specs before coding:
   (e.g. *WHEN sync is enabled and a transport is configured THE SYSTEM SHALL
   upsert the metadata payload to the configured Turso database*) and relax the
   "transport choice is a non-goal" line. Do **not** edit `intent.md` directly.
-- **`/spec-decisions`** — log: chose full Turso now + hashed-per-project IDs with a
-  local-only salt + local-only device id, `[intent: I-4]`.
 
 ---
 

@@ -92,7 +92,7 @@ pub fn install(source: &dyn SkillSource, target_skills_root: &Path) -> AppResult
         .map_err(|_| AppError::SkillMdMissing(skill_md_path.clone()))?;
 
     // Validate against the *intended install name* — the directory we are about
-    // to create — so the `name == parent_dir` rule is meaningful (see DECISIONS).
+    // to create — so the `name == parent_dir` rule is meaningful.
     let conformance = conformance::evaluate(&skill_md, &materialized.intended_name);
     if !conformance.is_installable() {
         return Err(AppError::ValidationFailed(conformance));

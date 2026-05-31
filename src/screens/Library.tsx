@@ -1,5 +1,6 @@
+import type { ScrollBoxRenderable } from '@opentui/core'
 import { useKeyboard } from '@opentui/react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ConformanceBadge } from '../components/ConformanceBadge'
 import {
   discover,
@@ -100,10 +101,17 @@ export function Library({ onHint }: { onHint: (hint: string) => void }) {
   const [data, setData] = useState<Data | null>(null)
   const [selected, setSelected] = useState(0)
   const [sort, setSort] = useState<Sort>('name')
+  const listRef = useRef<ScrollBoxRenderable>(null)
 
   useEffect(() => {
     setData(loadData())
   }, [])
+
+  // Keep the highlighted row visible as selection moves through the scrollable
+  // list, so the active skill never scrolls out of view.
+  useEffect(() => {
+    listRef.current?.scrollChildIntoView(`row-${selected}`)
+  }, [selected])
 
   useEffect(() => {
     onHint('↑/↓ select • s cycle sort • r reload')
@@ -152,6 +160,15 @@ export function Library({ onHint }: { onHint: (hint: string) => void }) {
   const projectRows = sortedRows.filter((r) => r.source === 'project')
   const globalRows = sortedRows.filter((r) => r.source === 'global')
   const pluginRows = sortedRows.filter((r) => r.source === 'plugin')
+  // Consecutive plugin rows share an owning plugin (sortRows groups them), so
+  // collapse them into ordered groups for a header-per-plugin render.
+  const pluginGroups: { plugin: string; rows: Row[] }[] = []
+  for (const row of pluginRows) {
+    const last = pluginGroups[pluginGroups.length - 1]
+    const plugin = row.plugin ?? ''
+    if (last && last.plugin === plugin) last.rows.push(row)
+    else pluginGroups.push({ plugin, rows: [row] })
+  }
   let runningIdx = 0
 
   return (
@@ -164,13 +181,15 @@ export function Library({ onHint }: { onHint: (hint: string) => void }) {
         <text fg="#888888">sort: {sort}</text>
       </box>
       <box flexDirection="row" flexGrow={1}>
-        <box
-          flexDirection="column"
+        <scrollbox
+          ref={listRef}
+          scrollY
           width="55%"
           border
           borderColor="#3a3a3a"
           padding={1}
           title="Installed"
+          contentOptions={{ flexDirection: 'column' }}
         >
           {projectRows.length > 0 && <text fg="#ffcc66">── Project ──</text>}
           {projectRows.map((row) => {
@@ -178,6 +197,7 @@ export function Library({ onHint }: { onHint: (hint: string) => void }) {
             return (
               <SkillLine
                 key={`p-${row.descriptor.path}`}
+                id={`row-${i}`}
                 row={row}
                 active={i === selected}
               />
@@ -189,25 +209,29 @@ export function Library({ onHint }: { onHint: (hint: string) => void }) {
             return (
               <SkillLine
                 key={`g-${row.descriptor.path}`}
+                id={`row-${i}`}
                 row={row}
                 active={i === selected}
               />
             )
           })}
-          {pluginRows.length > 0 && (
-            <text fg="#ffcc66">── Plugin (read-only) ──</text>
-          )}
-          {pluginRows.map((row) => {
-            const i = runningIdx++
-            return (
-              <SkillLine
-                key={`pl-${row.descriptor.path}`}
-                row={row}
-                active={i === selected}
-              />
-            )
-          })}
-        </box>
+          {pluginGroups.flatMap((group) => [
+            <text key={`plh-${group.plugin}`} fg="#ffcc66">
+              ── {group.plugin} ──
+            </text>,
+            ...group.rows.map((row) => {
+              const i = runningIdx++
+              return (
+                <SkillLine
+                  key={`pl-${row.descriptor.path}`}
+                  id={`row-${i}`}
+                  row={row}
+                  active={i === selected}
+                />
+              )
+            }),
+          ])}
+        </scrollbox>
         <box
           flexDirection="column"
           width="45%"
@@ -223,10 +247,18 @@ export function Library({ onHint }: { onHint: (hint: string) => void }) {
   )
 }
 
-function SkillLine({ row, active }: { row: Row; active: boolean }) {
+function SkillLine({
+  row,
+  active,
+  id,
+}: {
+  row: Row
+  active: boolean
+  id: string
+}) {
   const usage = row.count > 0 ? `${row.count}×` : '—'
   return (
-    <box flexDirection="row">
+    <box id={id} flexDirection="row">
       <text fg={active ? '#ffcc66' : '#cccccc'}>
         {active ? '▶ ' : '  '}
         {row.descriptor.name}
@@ -291,6 +323,11 @@ function sortRows(rows: Row[], sort: Sort): Row[] {
           a.descriptor.name.localeCompare(b.descriptor.name)
   groups.project.sort(cmp)
   groups.global.sort(cmp)
-  groups.plugin.sort(cmp)
+  // Group plugin rows by owning plugin (alphabetical), preserving `cmp` order
+  // within each plugin. The flat order must match the grouped render so the
+  // selection index stays aligned.
+  groups.plugin.sort(
+    (a, b) => (a.plugin ?? '').localeCompare(b.plugin ?? '') || cmp(a, b),
+  )
   return [...groups.project, ...groups.global, ...groups.plugin]
 }

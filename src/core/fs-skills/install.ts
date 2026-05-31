@@ -34,7 +34,10 @@ function ensureSkillDirName(name: string): void {
   }
 }
 
-function readDescriptor(skillDir: string, dirName: string): SkillDescriptor {
+export function readDescriptor(
+  skillDir: string,
+  dirName: string,
+): SkillDescriptor {
   const skillMd = readSkillMd(skillDir)
   const conformance =
     skillMd !== undefined

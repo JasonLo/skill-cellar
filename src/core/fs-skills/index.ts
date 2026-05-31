@@ -4,9 +4,11 @@ export {
   install,
   installFromRegistry,
   publishSkill,
+  readDescriptor,
   readSkillMdAt,
   type SkillDescriptor,
 } from './install'
+export { discoverPlugins, type PluginSkillDescriptor } from './plugins'
 export {
   LocalDir,
   type Materialized,

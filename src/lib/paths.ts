@@ -9,6 +9,10 @@ export function globalSkillsRoot(): string {
   return join(homedir(), '.claude', 'skills')
 }
 
+export function pluginSkillsRoot(): string {
+  return join(homedir(), '.claude', 'plugins')
+}
+
 export function appDataDir(): string {
   return join(homedir(), '.config', 'skill-cellar')
 }

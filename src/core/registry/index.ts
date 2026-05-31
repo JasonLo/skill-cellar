@@ -2,19 +2,16 @@ import { NetworkError } from '../errors'
 import { bundledSnapshot, readCache, writeCache } from './cache'
 import type { RegistryFetcher } from './fetcher'
 import { parseCatalog } from './parse'
-import type {
-  RegistryManifest,
-  RegistryResult,
-} from './types'
+import type { RegistryManifest, RegistryResult } from './types'
 
+export type { RegistryFetcher } from './fetcher'
+export { parseCatalog } from './parse'
 export type {
   RegistryEntry,
   RegistryManifest,
   RegistryResult,
   RegistrySource,
 } from './types'
-export { parseCatalog } from './parse'
-export type { RegistryFetcher } from './fetcher'
 
 /** Default staleness threshold: 24 hours in seconds. */
 export const DEFAULT_STALENESS_SECONDS = 24 * 60 * 60
@@ -39,7 +36,10 @@ export function resolveCatalog(
 ): RegistryResult {
   const cached = readCache(appDataDir)
 
-  if (cached !== null && !isStale(cached.fetchedAtUnix, nowUnix, maxAgeSeconds)) {
+  if (
+    cached !== null &&
+    !isStale(cached.fetchedAtUnix, nowUnix, maxAgeSeconds)
+  ) {
     return { manifest: cached.manifest, source: 'cache' }
   }
 

@@ -1,5 +1,5 @@
 import type { Frontmatter } from './frontmatter'
-import { type Finding, errorFinding, warningFinding } from './verdict'
+import { errorFinding, type Finding, warningFinding } from './verdict'
 
 const NAME_MAX = 64
 const DESC_MAX = 1024

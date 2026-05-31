@@ -1,7 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { dirname } from 'node:path'
 import { RegistryUnavailableError } from '../errors'
 import { parseCatalog } from './parse'
 import type { RegistryManifest } from './types'

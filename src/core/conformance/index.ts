@@ -10,6 +10,8 @@ import {
   errorFinding,
 } from './verdict'
 
+export type { Frontmatter } from './frontmatter'
+export { parseFrontmatter, splitFrontmatter } from './frontmatter'
 export type { Conformance, Finding, Severity, Verdict } from './verdict'
 export {
   conformanceFromFindings,
@@ -18,8 +20,6 @@ export {
   isInstallable,
   warningFinding,
 } from './verdict'
-export type { Frontmatter } from './frontmatter'
-export { parseFrontmatter, splitFrontmatter } from './frontmatter'
 
 export function evaluate(skillMd: string, parentDirName: string): Conformance {
   let fm

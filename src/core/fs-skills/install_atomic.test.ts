@@ -10,11 +10,8 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import {
-  AlreadyInstalledError,
-  ValidationFailedError,
-} from '../errors'
-import { LocalDir, install } from './index'
+import { AlreadyInstalledError, ValidationFailedError } from '../errors'
+import { install, LocalDir } from './index'
 
 function makeSkill(root: string, dirName: string, skillMd: string): string {
   const dir = join(root, dirName)

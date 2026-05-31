@@ -1,9 +1,4 @@
-import {
-  mkdirSync,
-  mkdtempSync,
-  rmSync,
-  writeFileSync,
-} from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
@@ -15,9 +10,7 @@ function skillLine(cwd: string, skill: string): string {
     cwd,
     message: {
       role: 'assistant',
-      content: [
-        { type: 'tool_use', name: 'Skill', input: { skill } },
-      ],
+      content: [{ type: 'tool_use', name: 'Skill', input: { skill } }],
     },
   })
 }

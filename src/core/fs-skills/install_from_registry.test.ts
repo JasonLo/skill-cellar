@@ -11,8 +11,8 @@ import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ValidationFailedError } from '../errors'
 import type { RegistryEntry } from '../registry/types'
-import type { Materialized, SkillFetcher } from './source'
 import { installFromRegistry } from './index'
+import type { Materialized, SkillFetcher } from './source'
 
 class FakeFetcher implements SkillFetcher {
   fetches = 0

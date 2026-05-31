@@ -3,8 +3,8 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { NetworkError } from '../errors'
-import { DEFAULT_STALENESS_SECONDS, getRegistry, resolveCatalog } from './index'
 import type { RegistryFetcher } from './fetcher'
+import { DEFAULT_STALENESS_SECONDS, getRegistry, resolveCatalog } from './index'
 
 function sampleJson(marker: string): string {
   return JSON.stringify({
@@ -142,10 +142,7 @@ describe('registry catalog resolution', () => {
   it('registry_falls_back_to_cache_when_offline', () => {
     const dir = newTmp('sc-reg-')
 
-    const online = getRegistry(
-      new GistFetcher(sampleJson('from-network')),
-      dir,
-    )
+    const online = getRegistry(new GistFetcher(sampleJson('from-network')), dir)
     expect(online.source).toBe('network')
 
     const cached = getRegistry(new OfflineFetcher(), dir)

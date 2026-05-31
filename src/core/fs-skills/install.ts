@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs'
+import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { type Conformance, evaluate, isInstallable } from '../conformance'
 import {
@@ -12,9 +12,9 @@ import { atomicInstallDir, atomicWriteFile } from './atomic'
 import {
   type Materialized,
   RemoteSkill,
+  readSkillMd,
   type SkillFetcher,
   type SkillSource,
-  readSkillMd,
 } from './source'
 
 export interface SkillDescriptor {
@@ -50,10 +50,8 @@ function readDescriptor(skillDir: string, dirName: string): SkillDescriptor {
             },
           ],
         }
-  const fmName = skillMd ? extractField(skillMd, 'name') ?? dirName : dirName
-  const description = skillMd
-    ? extractField(skillMd, 'description')
-    : undefined
+  const fmName = skillMd ? (extractField(skillMd, 'name') ?? dirName) : dirName
+  const description = skillMd ? extractField(skillMd, 'description') : undefined
   return {
     name: fmName,
     dirName,

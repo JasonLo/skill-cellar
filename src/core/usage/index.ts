@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 export interface SkillCount {
@@ -24,7 +24,11 @@ export interface InstalledUsage {
 function walkJsonl(root: string): string[] {
   const out: string[] = []
   function visit(dir: string): void {
-    let entries: { name: string; isDirectory: () => boolean; isFile: () => boolean }[]
+    let entries: {
+      name: string
+      isDirectory: () => boolean
+      isFile: () => boolean
+    }[]
     try {
       entries = readdirSync(dir, { withFileTypes: true })
     } catch {
@@ -84,7 +88,9 @@ export function usageReport(projectsRoot: string): UsageReport {
       skills.push({ skill, count })
     }
     skills.sort(
-      (a, b) => b.count - a.count || (a.skill < b.skill ? -1 : a.skill > b.skill ? 1 : 0),
+      (a, b) =>
+        b.count - a.count ||
+        (a.skill < b.skill ? -1 : a.skill > b.skill ? 1 : 0),
     )
     projects.push({ project, total, skills })
   }
@@ -112,8 +118,7 @@ export function joinInstalled(
   }))
   out.sort(
     (a, b) =>
-      a.total - b.total ||
-      (a.skill < b.skill ? -1 : a.skill > b.skill ? 1 : 0),
+      a.total - b.total || (a.skill < b.skill ? -1 : a.skill > b.skill ? 1 : 0),
   )
   return out
 }

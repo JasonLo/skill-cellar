@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { UsageReport } from '../usage'
 import {
+  buildSyncPayload,
+  SyncBoundary,
   type SyncPayload,
   type SyncTransport,
-  SyncBoundary,
-  buildSyncPayload,
 } from './index'
 
 function sampleReport(): UsageReport {

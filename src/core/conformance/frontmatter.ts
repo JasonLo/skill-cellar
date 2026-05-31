@@ -67,9 +67,7 @@ export function parseFrontmatter(skillMd: string): Frontmatter {
   try {
     raw = YAML.parse(yamlText)
   } catch (e) {
-    throw new FrontmatterParseError(
-      e instanceof Error ? e.message : String(e),
-    )
+    throw new FrontmatterParseError(e instanceof Error ? e.message : String(e))
   }
   if (raw === null || raw === undefined) {
     return {}
